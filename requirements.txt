@@ -1,0 +1,9 @@
+# Core deps. Tested with Python 3.10/3.11, CUDA 11.8/12.x.
+# NOTE: install torch separately with the CUDA wheel that matches your driver:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+torch>=2.1
+numpy>=1.24
+pandas>=2.0
+pyyaml>=6.0
+tqdm>=4.65
+tensorboard>=2.14

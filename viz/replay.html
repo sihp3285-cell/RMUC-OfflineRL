@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RMUC 离线强化学习 · 决策回放</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --line:#21262d; --fg:#e6edf3; --dim:#7d8590;
+    --red:#ff5b53; --blue:#4d9dff; --model:#3fc9c9; --human:#f7d154;
+    --evidence:#ff6ad5;
+    --accent:#3fc9c9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:14px/1.5 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px 16px 40px}
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+  h1{font-size:17px;margin:0;font-weight:600;letter-spacing:.02em}
+  .sub{color:var(--dim);font-size:12.5px}
+  .tag{background:var(--panel);border:1px solid var(--line);border-radius:5px;
+       padding:1px 7px;font-size:12px;color:var(--dim)}
+  .stage{position:relative;background:#000;border:1px solid var(--line);
+         border-radius:10px;overflow:hidden}
+  canvas{display:block;width:100%}
+  #tape{height:66px;background:var(--panel);border-top:1px solid var(--line)}
+  .bar{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+  button,select{background:var(--panel);color:var(--fg);border:1px solid var(--line);
+    border-radius:6px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+  button:hover,select:hover{border-color:var(--dim)}
+  button.on{border-color:var(--accent);color:var(--accent)}
+  #play{width:78px;font-weight:600}
+  #seek{flex:1;min-width:200px;accent-color:var(--accent)}
+  #clock{font:13px/1 ui-monospace,Consolas,monospace;color:var(--dim);min-width:74px}
+  .toggles{display:flex;gap:8px;flex-wrap:wrap}
+  .panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .card h2{font-size:12px;margin:0 0 10px;color:var(--dim);font-weight:600;
+           letter-spacing:.08em;text-transform:uppercase}
+  .kv{display:flex;justify-content:space-between;gap:10px;padding:3px 0;
+      font:13px/1.5 ui-monospace,Consolas,monospace}
+  .kv b{font-weight:600}
+  .hp{height:6px;border-radius:3px;background:#30363d;overflow:hidden;margin-top:3px}
+  .hp i{display:block;height:100%;border-radius:3px}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;color:var(--dim);font-size:12px;margin-top:10px}
+  .legend s{width:16px;height:3px;border-radius:2px;display:inline-block;
+            vertical-align:middle;margin-right:5px;text-decoration:none}
+  /* On-canvas HUD: the decision readout has to sit INSIDE the captured frame,
+     or a screen recording of the arena shows no decision at all. */
+  /* No corner of this arena is reliably empty — measured 6-10% of robot-seconds
+     under the panel wherever it goes — so the position is cycled by hand rather
+     than auto-placed, which would move it mid-shot. */
+  .hud{position:absolute;z-index:5;pointer-events:none;
+       background:rgba(13,17,23,.80);border:1px solid var(--line);border-radius:9px;
+       padding:9px 11px 10px;backdrop-filter:blur(7px);min-width:268px}
+  .hud.tl{top:12px;left:12px}     .hud.tr{top:12px;right:12px}
+  .hud.bl{bottom:78px;left:12px}  .hud.br{bottom:78px;right:12px}
+  .hud h3{margin:0 0 7px;font-size:11px;letter-spacing:.09em;color:var(--dim);
+          font-weight:600;display:flex;justify-content:space-between;gap:10px}
+  .hud h3 b{color:var(--fg);letter-spacing:0}
+  .hg{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:2px 9px;
+      font:13px/1.45 ui-monospace,Consolas,monospace;align-items:baseline}
+  .hg .k{color:var(--dim);font-size:11.5px}
+  .hg .m{color:var(--model);font-weight:600}
+  .hg .u{color:var(--human)}
+  .hg .ok{font-size:11px;text-align:right}
+  .hud .pb{grid-column:1/-1;height:4px;border-radius:2px;background:#30363d;
+           margin:1px 0 3px;overflow:hidden}
+  .hud .pb i{display:block;height:100%}
+  .hud.hide{display:none}
+  /* recording mode: strip everything that is not the picture */
+  body.rec .wrap{max-width:none;padding:0}
+  body.rec header,body.rec .bar,body.rec .legend,body.rec .panels,body.rec .hint{display:none}
+  body.rec .stage{border:0;border-radius:0}
+  .drop{position:absolute;inset:0;z-index:9;display:flex;align-items:center;
+        justify-content:center;flex-direction:column;gap:10px;
+        background:rgba(13,17,23,.94);text-align:center;padding:24px;font-size:14px}
+  .drop code{background:#0d1117;border:1px solid var(--line);border-radius:5px;
+             padding:3px 8px;display:inline-block;margin-top:4px;
+             font:12.5px ui-monospace,Consolas,monospace;color:var(--accent)}
+  .hint{color:var(--dim);font-size:12px;margin-top:14px}
+  .hint code{background:var(--panel);border:1px solid var(--line);border-radius:4px;
+             padding:1px 5px;font:11.5px ui-monospace,Consolas,monospace;color:var(--accent)}
+  @media(max-width:720px){.panels{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>RMUC 离线强化学习 · 决策回放</h1>
+    <span class="sub" id="subtitle">载入中…</span>
+    <span class="tag" id="policytag"></span>
+  </header>
+
+  <div class="stage">
+    <canvas id="field"></canvas>
+    <div class="hud bl" id="hud">
+      <h3><span>当前决策</span><b id="hudego"></b></h3>
+      <div class="hg" id="hudbody"></div>
+    </div>
+    <canvas id="tape"></canvas>
+    <div class="drop" id="drop">
+      <div><b>把导出的 replay JSON 拖到这里</b></div>
+      <div class="sub">或者在 viz/ 目录起一个本地服务,页面会自动载入
+        <code>python -m viz.serve</code></div>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button id="play">▶ 播放</button>
+    <input type="range" id="seek" min="0" max="1" step="0.01" value="0">
+    <span id="clock">0:00 / 0:00</span>
+    <select id="speed">
+      <option value="1">1×</option><option value="2" selected>2×</option>
+      <option value="4">4×</option><option value="8">8×</option>
+    </select>
+  </div>
+
+  <div class="bar">
+    <select id="match" style="display:none"></select>
+    <select id="ego"></select>
+    <div class="toggles">
+      <button data-t="model" class="on">模型决策</button>
+      <button data-t="human" class="on">人类实际</button>
+      <button data-t="probs" class="on">目标分布</button>
+      <button data-t="trail">轨迹</button>
+      <button data-t="map" class="on">场地图</button>
+      <button data-t="grid" class="on">网格</button>
+      <button data-t="hud" class="on">决策浮窗</button>
+      <button id="hudpos">浮窗位置</button>
+      <button id="rec">录制模式</button>
+    </div>
+  </div>
+
+  <p class="hint" id="nomap" hidden>
+    未找到场地底图。它来自 RMUC 2026 规则手册,属 DJI 素材,本仓库不作分发 ——
+    按 <code>viz/assets/README.md</code> 放到
+    <code>viz/assets/rmuc_2026_field_top_view.jpeg</code> 即可自动启用。
+  </p>
+
+  <div class="legend">
+    <span><s style="background:var(--model)"></s>模型导航子目标 / 选定目标</span>
+    <span><s style="background:var(--human);opacity:.9"></s>人类实际走向</span>
+    <span><s style="background:var(--evidence)"></s>实际命中（BattleScope）</span>
+    <span><s style="background:var(--red)"></s>红方</span>
+    <span><s style="background:var(--blue)"></s>蓝方</span>
+  </div>
+
+  <div class="panels">
+    <div class="card">
+      <h2>建筑 / 全场一致率</h2>
+      <div id="side"></div>
+    </div>
+    <div class="card">
+      <h2>快捷键</h2>
+      <div class="kv"><span style="color:var(--dim)">空格</span><b>播放 / 暂停</b></div>
+      <div class="kv"><span style="color:var(--dim)">← →</span><b>逐秒步进（Shift 跳 10 秒）</b></div>
+      <div class="kv"><span style="color:var(--dim)">N / P</span><b>跳到下一 / 上一处目标分歧</b></div>
+      <div class="kv"><span style="color:var(--dim)">H</span><b>决策浮窗换角</b></div>
+      <div class="kv"><span style="color:var(--dim)">R</span><b>录制模式（Esc 退出）</b></div>
+    </div>
+  </div>
+
+  <p class="hint">
+    数据为 1 Hz 裁判系统采样,画面在相邻帧之间做插值。模型每秒只输出三件事:
+    去哪(导航子目标)、打谁(目标选择)、是否开火(开火许可)——瞄准与扳机由自瞄接管。
+  </p>
+</div>
+
+<script>
+"use strict";
+
+// ---------------------------------------------------------------- constants
+const CAMP_RED = "红", CAMP_BLUE = "蓝";
+const COL = {
+  red: "#ff5b53", blue: "#4d9dff", model: "#3fc9c9", human: "#f7d154",
+  evidence: "#ff6ad5",
+  dim: "#7d8590", fg: "#e6edf3", line: "#21262d",
+};
+// one colour per target class, in schema.MOBILE_TYPES order; last = "no target"
+const TGT_COL = ["#ff8f4d","#b98cff","#4dd97e","#4d9dff","#ff6ec7","#f7d154","#3d444d"];
+
+const S = {
+  data: null, t: 0, playing: false, speed: 2, ego: 0,
+  show: {model:1, human:1, probs:1, trail:0, grid:1, map:1, hud:1},
+};
+
+// ---------------------------------------------------------------- arena image
+// The referee origin is NOT the corner of the rulebook diagram: tracking starts
+// at the inner corners of the valid field, so the perimeter barrier has to be
+// cropped off before the picture is stretched onto the 28x15 m box. Crop is
+// expressed as ratios of (1683 x 938) so a resized copy still lines up.
+// Calibration from ezthor/rm-battlescope, rmuc_trajectory/field.py.
+const FIELD_IMG = {
+  src: "assets/rmuc_2026_field_top_view.jpeg",
+  crop: [100/1683, 69/938, 1576/1683, 856/938],
+};
+let fieldImg = null;
+(function(){
+  const im = new Image();
+  im.onload = () => { fieldImg = im; document.querySelector("#nomap").hidden = true; };
+  im.onerror = () => { document.querySelector("#nomap").hidden = false; };
+  im.src = FIELD_IMG.src;
+})();
+
+// ------------------------------------------------------------------- helpers
+const $ = s => document.querySelector(s);
+const clamp = (v,a,b) => v<a?a:v>b?b:v;
+const lerp = (a,b,u) => a + (b-a)*u;
+
+/** Linear sample of a per-second array at fractional time t. */
+function at(arr, t){
+  const n = arr.length; if(!n) return 0;
+  const i = clamp(Math.floor(t), 0, n-1), j = Math.min(i+1, n-1);
+  return lerp(arr[i], arr[j], t-i);
+}
+/** Nearest-second sample — for anything that is a discrete decision. */
+function step(arr, t){
+  return arr[clamp(Math.round(t), 0, arr.length-1)];
+}
+/** Angles must interpolate the short way round, or the turret spins backwards. */
+function atAngle(arr, t){
+  const n = arr.length; if(!n) return 0;
+  const i = clamp(Math.floor(t), 0, n-1), j = Math.min(i+1, n-1);
+  let d = ((arr[j]-arr[i]) % 360 + 540) % 360 - 180;
+  return arr[i] + d*(t-i);
+}
+const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+
+// --------------------------------------------------------------- field canvas
+const fc = $("#field"), fx = fc.getContext("2d");
+let PX = 40, OX = 0, OY = 0;      // pixels per metre, and the field origin
+
+function resize(){
+  const d = S.data; if(!d) return;
+  const W = fc.clientWidth, dpr = window.devicePixelRatio || 1;
+  const F = d.meta.field;
+  const pad = 26;
+  PX = (W - pad*2) / F.x;
+  const H = Math.round(F.y*PX + pad*2);
+  fc.style.height = H + "px";
+  fc.width = Math.round(W*dpr); fc.height = Math.round(H*dpr);
+  fx.setTransform(dpr,0,0,dpr,0,0);
+  OX = pad; OY = pad;
+
+  const tc = $("#tape"), th = 66;
+  tc.width = Math.round(W*dpr); tc.height = Math.round(th*dpr);
+  tc.getContext("2d").setTransform(dpr,0,0,dpr,0,0);
+  drawTape();
+}
+// field metres -> canvas pixels.  Canvas y grows downward, the arena's does not.
+const cx = x => OX + x*PX;
+const cy = y => OY + (S.data.meta.field.y - y)*PX;
+
+function drawField(){
+  const F = S.data.meta.field;
+  fx.clearRect(0,0,fc.width,fc.height);
+  fx.fillStyle = "#070a0e";
+  fx.fillRect(0,0,fc.clientWidth,fc.clientHeight);
+  fx.fillStyle = "#0d1117";
+  fx.fillRect(cx(0),cy(F.y),F.x*PX,F.y*PX);
+
+  const mapped = fieldImg && S.show.map;
+  if(mapped){
+    const iw = fieldImg.naturalWidth, ih = fieldImg.naturalHeight, c = FIELD_IMG.crop;
+    fx.drawImage(fieldImg,
+      c[0]*iw, c[1]*ih, (c[2]-c[0])*iw, (c[3]-c[1])*ih,
+      cx(0), cy(F.y), F.x*PX, F.y*PX);
+    // The rulebook render is a bright colour drawing; at full strength it wins
+    // the fight against the data. Knock it back so the robots stay readable.
+    fx.fillStyle = "rgba(13,17,23,0.52)";
+    fx.fillRect(cx(0),cy(F.y),F.x*PX,F.y*PX);
+  }
+
+  if(S.show.grid){
+    fx.lineWidth = 1;
+    // fainter over the arena image, which already carries its own structure
+    const maj = mapped?"#ffffff14":"#1b222c", min = mapped?"#ffffff08":"#141a22";
+    for(let x=0;x<=F.x;x+=1){
+      // every 2 m is emphasised: that is the cell size of the engagement prior
+      fx.strokeStyle = (x%2===0)?maj:min;
+      fx.beginPath(); fx.moveTo(cx(x),cy(0)); fx.lineTo(cx(x),cy(F.y)); fx.stroke();
+    }
+    for(let y=0;y<=F.y;y+=1){
+      fx.strokeStyle = (y%2===0)?maj:min;
+      fx.beginPath(); fx.moveTo(cx(0),cy(y)); fx.lineTo(cx(F.x),cy(y)); fx.stroke();
+    }
+  }
+  fx.strokeStyle = "#2a3441"; fx.lineWidth = 1.5;
+  fx.strokeRect(cx(0),cy(F.y),F.x*PX,F.y*PX);
+}
+
+const R_BY_TYPE = {"英雄":.46,"工程":.44,"步兵3":.40,"步兵4":.40,"空中":.34,"哨兵":.42};
+const SHORT = {"英雄":"英","工程":"工","步兵3":"3","步兵4":"4","空中":"空","哨兵":"哨"};
+
+function drawRobot(r, t, isEgo){
+  if(!step(r.known, t)) return;                 // never tracked yet
+  const x = at(r.x,t), y = at(r.y,t);
+  const alive = step(r.alive,t);
+  const base = r.camp===CAMP_RED ? COL.red : COL.blue;
+  const rad = (R_BY_TYPE[r.type]||.4)*PX;
+
+  if(isEgo){                                    // halo so the ego is findable
+    fx.beginPath(); fx.arc(cx(x),cy(y),rad+7,0,7);
+    fx.strokeStyle = COL.model; fx.lineWidth = 2; fx.globalAlpha = .85;
+    fx.stroke(); fx.globalAlpha = 1;
+  }
+  // muzzle heading — only where the chassis actually reports one
+  if(alive && step(r.yaw_ok,t)){
+    const a = atAngle(r.yaw,t)*Math.PI/180;
+    fx.beginPath(); fx.moveTo(cx(x),cy(y));
+    fx.lineTo(cx(x+Math.cos(a)*1.5), cy(y+Math.sin(a)*1.5));
+    fx.strokeStyle = base; fx.globalAlpha = .55; fx.lineWidth = 2;
+    fx.stroke(); fx.globalAlpha = 1;
+  }
+  fx.beginPath(); fx.arc(cx(x),cy(y),rad,0,7);
+  fx.fillStyle = alive ? base : "#20262e";
+  fx.globalAlpha = alive ? 1 : .45; fx.fill(); fx.globalAlpha = 1;
+  fx.lineWidth = 1.5; fx.strokeStyle = "#00000066"; fx.stroke();
+
+  // health as an arc around the chassis
+  if(alive){
+    const f = clamp(at(r.hp,t)/(r.maxhp||1), 0, 1);
+    fx.beginPath();
+    fx.arc(cx(x),cy(y),rad+3.5,-Math.PI/2,-Math.PI/2+f*2*Math.PI);
+    fx.strokeStyle = f>.5?"#4dd97e":f>.25?"#f7d154":"#ff5b53";
+    fx.lineWidth = 2.5; fx.stroke();
+  }
+  fx.fillStyle = alive?"#0d1117":"#7d8590";
+  fx.font = `600 ${Math.round(rad*.95)}px ui-monospace,Consolas,monospace`;
+  fx.textAlign = "center"; fx.textBaseline = "middle";
+  fx.fillText(SHORT[r.type]||"?", cx(x), cy(y)+.5);
+}
+
+function arrow(x0,y0,x1,y1,col,w,dash){
+  fx.save();
+  fx.strokeStyle = col; fx.lineWidth = w; fx.setLineDash(dash||[]);
+  fx.beginPath(); fx.moveTo(cx(x0),cy(y0)); fx.lineTo(cx(x1),cy(y1)); fx.stroke();
+  fx.setLineDash([]);
+  const a = Math.atan2(cy(y1)-cy(y0), cx(x1)-cx(x0)), h = 8+w;
+  fx.beginPath();
+  fx.moveTo(cx(x1),cy(y1));
+  fx.lineTo(cx(x1)-h*Math.cos(a-.4), cy(y1)-h*Math.sin(a-.4));
+  fx.lineTo(cx(x1)-h*Math.cos(a+.4), cy(y1)-h*Math.sin(a+.4));
+  fx.closePath(); fx.fillStyle = col; fx.fill();
+  fx.restore();
+}
+
+function drawOverlay(t){
+  const d = S.data, e = d.egos[S.ego]; if(!e) return;
+  const self = d.robots.find(r => r.id === e.id); if(!self) return;
+  if(!step(self.alive,t) || !step(self.known,t)) return;
+  const x = at(self.x,t), y = at(self.y,t);
+  const i = clamp(Math.round(t), 0, e.model.gx.length-1);
+
+  if(S.show.human){
+    const hx = e.human.gx[i], hy = e.human.gy[i];
+    if(Math.hypot(hx,hy) > .3) arrow(x,y,x+hx,y+hy,COL.human,2,[5,4]);
+  }
+  if(S.show.model){
+    const gx = e.model.gx[i], gy = e.model.gy[i];
+    if(Math.hypot(gx,gy) > .3) arrow(x,y,x+gx,y+gy,COL.model,3);
+
+    // whom to engage: a line to the enemy the categorical head picked
+    const tgt = e.model.target[i];
+    if(tgt !== d.meta.no_target){
+      const foe = enemyOf(e, tgt);
+      if(foe && step(foe.known,t) && step(foe.alive,t)){
+        const fxp = at(foe.x,t), fyp = at(foe.y,t);
+        fx.save();
+        fx.strokeStyle = TGT_COL[tgt];
+        fx.globalAlpha = .35 + .55*e.model.target_conf[i];
+        fx.lineWidth = 2; fx.setLineDash([7,5]);
+        fx.beginPath(); fx.moveTo(cx(x),cy(y)); fx.lineTo(cx(fxp),cy(fyp)); fx.stroke();
+        fx.setLineDash([]);
+        fx.beginPath(); fx.arc(cx(fxp),cy(fyp),(R_BY_TYPE[foe.type]||.4)*PX+6,0,7);
+        fx.stroke(); fx.restore();
+      }
+    }
+    // BattleScope-attributed victim: the outcome the aux loss was trained on
+    if(e.evidence && e.evidence.victim){
+      const ev = e.evidence.victim[i];
+      if(ev >= 0){
+        const foe = enemyOf(e, ev);
+        if(foe && step(foe.known,t) && step(foe.alive,t)){
+          const fxp = at(foe.x,t), fyp = at(foe.y,t);
+          fx.save();
+          fx.strokeStyle = COL.evidence; fx.globalAlpha = .9; fx.lineWidth = 2.2;
+          fx.setLineDash([2,3]);
+          fx.beginPath(); fx.moveTo(cx(x),cy(y)); fx.lineTo(cx(fxp),cy(fyp)); fx.stroke();
+          fx.setLineDash([]);
+          fx.beginPath(); fx.arc(cx(fxp),cy(fyp),(R_BY_TYPE[foe.type]||.4)*PX+10,0,7);
+          fx.stroke(); fx.restore();
+        }
+      }
+    }
+    // weapons free: a pulsing ring, so the gate reads at a glance
+    if(e.model.fire[i]){
+      const p = .5+.5*Math.sin(performance.now()/140);
+      fx.save(); fx.globalAlpha = .35+.4*p;
+      fx.beginPath(); fx.arc(cx(x),cy(y),(R_BY_TYPE[self.type]||.4)*PX+9+p*4,0,7);
+      fx.strokeStyle = COL.model; fx.lineWidth = 2.5; fx.stroke(); fx.restore();
+    }
+  }
+  if(S.show.trail){
+    fx.save(); fx.strokeStyle = COL.model; fx.globalAlpha = .5; fx.lineWidth = 1.5;
+    fx.beginPath();
+    for(let k=Math.max(0,Math.round(t)-40); k<=Math.round(t); k++){
+      const px = cx(self.x[k]), py = cy(self.y[k]);
+      k===Math.max(0,Math.round(t)-40) ? fx.moveTo(px,py) : fx.lineTo(px,py);
+    }
+    fx.stroke(); fx.restore();
+  }
+}
+
+function enemyOf(ego, cls){
+  const name = S.data.meta.target_classes[cls];
+  const camp = ego.camp===CAMP_RED ? CAMP_BLUE : CAMP_RED;
+  return S.data.robots.find(r => r.type===name && r.camp===camp);
+}
+
+// ------------------------------------------------------------ decision tape
+const tcv = $("#tape");
+function drawTape(){
+  const d = S.data; if(!d) return;
+  const g = tcv.getContext("2d"), W = tcv.clientWidth, H = 66;
+  const e = d.egos[S.ego], n = e.model.target.length, w = W/n;
+  g.clearRect(0,0,W,H);
+  g.fillStyle = "#161b22"; g.fillRect(0,0,W,H);
+
+  const rows = [["人类", e.human, 10], ["模型", e.model, 32]];
+  for(const [label, src, y] of rows){
+    for(let i=0;i<n;i++){
+      g.fillStyle = TGT_COL[src.target[i]];
+      g.globalAlpha = src.target[i]===d.meta.no_target ? .5 : .95;
+      g.fillRect(i*w, y, Math.max(w,1), 13);
+      if(src.fire[i]){                   // a tick above the band = weapons free
+        g.globalAlpha = .9; g.fillStyle = "#ffffff";
+        g.fillRect(i*w, y-3.5, Math.max(w,1), 2.5);
+      }
+    }
+    g.globalAlpha = 1;
+    g.fillStyle = COL.dim; g.font = "11px ui-monospace,Consolas,monospace";
+    g.textAlign = "left"; g.textBaseline = "middle";
+    g.fillText(label, 4, y+6.5);
+  }
+  // actual victim (BattleScope): a thin magenta strip above the disagreement row
+  if(e.evidence && e.evidence.victim){
+    g.fillStyle = COL.evidence; g.globalAlpha = .9;
+    for(let i=0;i<n;i++) if(e.evidence.victim[i]>=0)
+      g.fillRect(i*w, 47, Math.max(w,1), 3);
+    g.globalAlpha = 1;
+  }
+  // disagreement marks, so the interesting seconds are findable
+  g.fillStyle = "#ff5b53";
+  for(let i=0;i<n;i++) if(!e.agree.target[i]) g.fillRect(i*w, 54, Math.max(w,1), 3);
+  g.fillStyle = COL.dim; g.font = "10px ui-monospace,Consolas,monospace";
+  g.fillText("目标不一致", 4, 57);
+}
+
+function drawPlayhead(){
+  const g = tcv.getContext("2d"), W = tcv.clientWidth;
+  const x = W * S.t / Math.max(S.data.meta.T-1,1);
+  g.save(); g.strokeStyle = "#ffffff"; g.lineWidth = 1.5; g.globalAlpha = .9;
+  g.beginPath(); g.moveTo(x,0); g.lineTo(x,66); g.stroke(); g.restore();
+}
+
+// ------------------------------------------------------------------- panels
+function drawPanels(t){
+  const d = S.data, e = d.egos[S.ego];
+  const i = clamp(Math.round(t), 0, e.model.gx.length-1);
+  const cls = d.meta.target_classes;
+  const mt = e.model.target[i], ht = e.human.target[i];
+  const row = (k,v,c) =>
+    `<div class="kv"><span style="color:var(--dim)">${k}</span>
+     <b style="color:${c||"var(--fg)"}">${v}</b></div>`;
+
+  // ---- on-canvas HUD: model vs human, side by side, inside the frame -------
+  $("#hud").classList.toggle("hide", !S.show.hud);
+  if(S.show.hud){
+    const tick = ok => `<span class="ok" style="color:${ok?COL.model:COL.red}">`
+                     + `${ok?"✓":"✗"}</span>`;
+    const nc = e.agree.nav[i];
+    const ev = (e.evidence && e.evidence.victim) ? e.evidence.victim[i] : -1;
+    $("#hudego").textContent = `${e.camp}方${e.type} · ${fmt(t)}`;
+    let h =
+      `<span class="k"></span><span class="k" style="color:${COL.model}">模型</span>`
+    + `<span class="k" style="color:${COL.human}">人类</span><span class="k"></span>`
+    + `<span class="k">打谁</span>`
+    + `<span class="m" style="color:${TGT_COL[mt]}">${cls[mt]}</span>`
+    + `<span class="u" style="color:${TGT_COL[ht]}">${cls[ht]}</span>${tick(mt===ht)}`
+    + `<span class="k">实际命中</span>`
+    + (ev>=0
+        ? `<span class="m" style="color:${TGT_COL[ev]}">${cls[ev]}</span>`
+          + `<span class="k"></span>${tick(mt===ev)}`
+        : `<span class="k">—</span><span class="k"></span><span class="k"></span>`)
+    + `<span class="k">开火</span>`
+    + `<span class="m">${e.model.fire[i]?"允许":"禁止"} ${e.model.p_fire[i].toFixed(2)}</span>`
+    + `<span class="u">${e.human.fire[i]?"开火":"未开"}</span>`
+    + tick(!!e.model.fire[i] === !!e.human.fire[i])
+    + `<span class="k">走向</span>`
+    + `<span class="m">${e.model.gx[i].toFixed(1)},${e.model.gy[i].toFixed(1)}</span>`
+    + `<span class="u">${e.human.gx[i].toFixed(1)},${e.human.gy[i].toFixed(1)}</span>`
+    // nav has no right answer to tick against — show the direction agreement
+    + `<span class="ok" style="color:${COL.dim}">`
+    + `${(nc==null||Number.isNaN(nc)) ? "—" : (nc>=0?"+":"")+nc.toFixed(2)}</span>`;
+    if(S.show.probs){
+      e.model.target_probs[i].forEach((p,k)=>{
+        if(p < .04) return;              // hide the noise floor
+        h += `<span class="k" style="color:${TGT_COL[k]}">${cls[k]}</span>`
+           + `<span class="k" style="grid-column:2/-1">${(p*100).toFixed(0)}%</span>`
+           + `<div class="pb"><i style="width:${(p*100).toFixed(0)}%;`
+           + `background:${TGT_COL[k]}"></i></div>`;
+      });
+    }
+    $("#hudbody").innerHTML = h;
+  }
+
+  let s = "";
+  for(const b of d.buildings){
+    const f = clamp(at(b.hp,t)/(b.maxhp||1), 0, 1);
+    const c = b.camp===CAMP_RED?COL.red:COL.blue;
+    s += `<div class="kv"><span style="color:${c}">${b.camp}${b.type}</span>
+      <span style="color:var(--dim)">${Math.round(at(b.hp,t))}</span></div>
+      <div class="hp"><i style="width:${(f*100).toFixed(0)}%;background:${c}"></i></div>`;
+  }
+  const mean = a => a.reduce((x,y)=>x+y,0)/a.length;
+  const nav = e.agree.nav.filter(v=>v!==null && !Number.isNaN(v));
+  let evAgree = null;
+  if(e.evidence && e.evidence.victim){
+    const vals = [];
+    e.evidence.victim.forEach((v,k)=>{ if(v>=0) vals.push(e.model.target[k]===v?1:0); });
+    if(vals.length) evAgree = mean(vals)*100;
+  }
+  s += `<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:8px">`
+    + row("目标选择一致", (mean(e.agree.target)*100).toFixed(1)+"%", COL.model)
+    + row("实际命中一致", evAgree==null?"—":evAgree.toFixed(1)+"%", COL.evidence)
+    + row("开火许可一致", (mean(e.agree.fire)*100).toFixed(1)+"%", COL.model)
+    + row("走向余弦相似", nav.length?mean(nav).toFixed(3):"—", COL.model)
+    + `</div>`;
+  $("#side").innerHTML = s;
+}
+
+// --------------------------------------------------------------- main loop
+let last = performance.now();
+function frame(now){
+  const dt = Math.min((now-last)/1000, .1); last = now;
+  if(S.data){
+    if(S.playing){
+      S.t += dt*S.speed;
+      if(S.t >= S.data.meta.T-1){ S.t = S.data.meta.T-1; setPlaying(false); }
+      $("#seek").value = S.t;
+    }
+    drawField();
+    for(const r of S.data.robots) drawRobot(r, S.t, r.id===S.data.egos[S.ego].id);
+    drawOverlay(S.t);
+    drawTape(); drawPlayhead();
+    drawPanels(S.t);
+    $("#clock").textContent = `${fmt(S.t)} / ${fmt(S.data.meta.T-1)}`;
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ------------------------------------------------------------------ controls
+function setPlaying(v){
+  S.playing = v;
+  $("#play").textContent = v ? "❚❚ 暂停" : "▶ 播放";
+  $("#play").classList.toggle("on", v);
+}
+$("#play").onclick = () => {
+  if(!S.data) return;
+  if(S.t >= S.data.meta.T-1) S.t = 0;
+  setPlaying(!S.playing);
+};
+$("#seek").oninput = ev => { S.t = +ev.target.value; };
+$("#speed").onchange = ev => { S.speed = +ev.target.value; };
+$("#ego").onchange = ev => { S.ego = +ev.target.value; drawTape(); };
+document.querySelectorAll("[data-t]").forEach(b => {
+  b.onclick = () => {
+    const k = b.dataset.t;
+    S.show[k] = S.show[k] ? 0 : 1;
+    b.classList.toggle("on", !!S.show[k]);
+  };
+});
+const HUD_POS = ["bl","tl","tr","br"];
+function cycleHud(){
+  const h = $("#hud");
+  const i = HUD_POS.indexOf([...h.classList].find(c => HUD_POS.includes(c)));
+  h.classList.remove(HUD_POS[i]);
+  h.classList.add(HUD_POS[(i + 1) % HUD_POS.length]);
+}
+$("#hudpos").onclick = cycleHud;
+
+function setRec(on){
+  document.body.classList.toggle("rec", on);
+  $("#rec").classList.toggle("on", on);
+  resize();               // the stage changes width, so the canvas must re-fit
+}
+$("#rec").onclick = () => setRec(!document.body.classList.contains("rec"));
+
+/** Jump to the next/previous second where model and human pick different
+ *  targets — those are the only frames worth stopping on. */
+function jumpDisagree(dir){
+  const a = S.data.egos[S.ego].agree.target;
+  for(let k = clamp(Math.round(S.t),0,a.length-1) + dir; k >= 0 && k < a.length;
+      k += dir){
+    if(!a[k]){ S.t = k; $("#seek").value = k; setPlaying(false); return; }
+  }
+}
+
+document.addEventListener("keydown", ev => {
+  if(!S.data) return;
+  const step = ev.shiftKey ? 10 : 1;
+  if(ev.code === "Space"){ ev.preventDefault(); $("#play").click(); }
+  if(ev.code === "ArrowRight"){ S.t = clamp(S.t+step, 0, S.data.meta.T-1); $("#seek").value = S.t; }
+  if(ev.code === "ArrowLeft"){ S.t = clamp(S.t-step, 0, S.data.meta.T-1); $("#seek").value = S.t; }
+  if(ev.code === "KeyN"){ jumpDisagree(+1); }
+  if(ev.code === "KeyP"){ jumpDisagree(-1); }
+  if(ev.code === "KeyH"){ cycleHud(); }
+  if(ev.code === "KeyR"){ setRec(!document.body.classList.contains("rec")); }
+  if(ev.code === "Escape"){ setRec(false); }
+});
+window.addEventListener("resize", resize);
+
+// ---------------------------------------------------------------- data load
+function load(d){
+  S.data = d; S.t = 0; S.ego = 0; setPlaying(false);
+  const m = d.meta;
+  // Default to an infantry track: that is what the policy was trained on, and
+  // the hero track is deliberately included to show the transfer *failing*.
+  const inf = d.egos.findIndex(e => e.type.startsWith("步兵"));
+  S.ego = inf >= 0 ? inf : 0;
+
+  $("#subtitle").textContent =
+    `${m.red_school} vs ${m.blue_school} · ${m.region} · ${m.winner}方胜 · ${m.T}s`;
+  $("#policytag").textContent = `${m.policy.run} (${m.policy.algo.toUpperCase()})`;
+  const qt = parseFloat(new URLSearchParams(location.search).get("t"));
+  if(Number.isFinite(qt)) S.t = clamp(qt, 0, m.T-1);
+  $("#seek").max = m.T-1; $("#seek").value = S.t;
+  $("#ego").innerHTML = d.egos.map((e,i) =>
+    `<option value="${i}"${i===S.ego?" selected":""}>${e.camp}方 ${e.type}</option>`
+  ).join("");
+  $("#drop").style.display = "none";
+  resize();
+}
+
+function loadFile(name){
+  return fetch("replays/" + name)
+    .then(r => r.ok ? r.json() : Promise.reject(new Error(name)))
+    .then(load);
+}
+// viz.serve writes replays/index.json; without it, fall back to a fixed name so
+// the page still works behind any plain static server.
+fetch("replays/index.json")
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .then(list => {
+    if(!list.length) return Promise.reject();
+    if(list.length > 1){
+      const sel = $("#match");
+      sel.style.display = "";
+      sel.innerHTML = list.map((e,i) =>
+        `<option value="${i}">${e.label}</option>`).join("");
+      sel.onchange = ev => loadFile(list[+ev.target.value].file);
+    }
+    const want = new URLSearchParams(location.search).get("file");
+    return loadFile(want || list[0].file);
+  })
+  .catch(() => loadFile("game.json").catch(() => {}));
+
+const stage = document.querySelector(".stage");
+stage.addEventListener("dragover", e => { e.preventDefault(); });
+stage.addEventListener("drop", e => {
+  e.preventDefault();
+  const f = e.dataTransfer.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { load(JSON.parse(rd.result)); }
+                      catch(err){ alert("解析失败: " + err.message); } };
+  rd.readAsText(f);
+});
+</script>
+</body>
+</html>

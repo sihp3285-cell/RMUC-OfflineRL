@@ -1,0 +1,6 @@
+grid=1.0m (28x15=420 cells), per-match averages
+sentry: trajectories=1164 cells=25.37/420 entropy=1.757 top5=0.8135 cross_team_sim=0.1998 schools=91
+infantry: trajectories=2390 cells=73.74/420 entropy=3.498 top5=0.4042 cross_team_sim=0.5128 schools=96
+哨兵: trajectories=1164 cells=25.37/420 entropy=1.757 top5=0.8135 cross_team_sim=0.1998 schools=91
+步兵3: trajectories=1193 cells=73.24/420 entropy=3.493 top5=0.4052 cross_team_sim=0.3832 schools=95
+步兵4: trajectories=1197 cells=74.24/420 entropy=3.503 top5=0.4033 cross_team_sim=0.4078 schools=93

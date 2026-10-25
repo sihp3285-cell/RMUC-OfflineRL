@@ -1,0 +1,42 @@
+# Sentry (哨兵) — behaviour-cloning baseline (with return + quality weighting).
+algo: bc
+data: data/sentry
+out: runs/sentry_bc
+seed: 0
+
+model:
+  hidden: 256
+  depth: 2
+
+bc:
+  return_beta: 1.0          # >0 => %BC / return-weighted (learn from good rounds)
+  use_quality_weight: true  # prefer strong teams
+
+train:
+  batch_size: 1024
+  max_steps: 100000
+  lr: 3.0e-4
+  weight_decay: 0.0
+  warmup: 1000
+  grad_clip: 1.0
+  num_workers: 4
+  log_every: 200
+  eval_every: 5000
+  ckpt_every: 25000
+
+# same reward block so the shared dataset can be reused across algos
+reward:
+  w_outpost_atk: 3.0
+  w_base_atk: 5.0
+  w_dmg_deal: 1.0
+  w_kill: 2.0
+  w_outpost_def: 4.0
+  w_base_def: 6.0
+  w_dmg_take: 1.0
+  w_death: 2.0
+  w_ego_surv: 0.02
+  w_ego_hp: 1.5
+  w_heat: 0.5
+  w_econ: 0.5
+  w_win: 20.0
+  w_final_base: 5.0

@@ -1,0 +1,81 @@
+# IQL on the redesigned *tactical* action space, trained on the HUMAN-DRIVEN
+# infantry (步兵3 + 步兵4 pooled) — see README "为什么用步兵数据训练哨兵策略".
+#
+# Offline RL's ceiling is its demonstrator.  The sentry is autonomous, so its
+# logged trajectories are some team's own script: measured over 200 games it
+# covers 3.2x less of the map than infantry (23 vs 75 cells), at less than half
+# the positional entropy (1.70 vs 3.59 nats).  Infantry are human-operated and
+# structurally identical to the sentry (both cap at 400 HP / 260 heat / 17 mm,
+# and fire ~the same volume: 167 vs 162 rounds a match), so they are the right
+# demonstrations for a policy you intend to run on a sentry.
+#
+# What changed vs the old sentry_iql_goal.yaml:
+#   action  = nav sub-goal (2) + weapons-free gate (1) + soft target dist (7)
+#             instead of (vx, vy, yaw_rate, fire_rate).  A 1 Hz turret rate is
+#             aliased noise and a 1 Hz fire rate is an outcome, not a decision —
+#             auto-aim owns both loops on a real robot.
+#   obs     = 161-D (was 94): every ally/enemy now carries its capability tier
+#             (HP / 17mm / 42mm upgrade level + live chassis power), each enemy
+#             carries an empirical engagement (line-of-sight) prior, and the
+#             team block carries leak-safe opponent-strength features.  The team
+#             block is a FIXED 6-slot layout including the ego's own slot, so
+#             the column semantics do not depend on which chassis is acting —
+#             that is what lets an infantry-trained policy be run on the sentry.
+#             Deliberately no role one-hot: it would be out-of-distribution on
+#             any chassis not trained on, and collapses the policy to a constant.
+#
+# Capacity: kept at 256x2.  A 512x3 trunk was tried and made things WORSE — in
+# the 120k-step sentry run every validation metric peaked at the very first eval
+# (step 5000) and decayed monotonically afterwards while the training loss kept
+# falling.  With ~1200 trajectories the effective sample size is far below the
+# ~440k transition count, so the bigger trunk simply memorised faster.  This
+# also re-confirms that capacity was never the bottleneck.
+#
+# Schedule: the optimum lands within a few thousand steps, so max_steps is cut
+# 120k -> 20k, checkpoints are frequent enough to actually capture it, and
+# training early-stops on the validation metric.  Evaluate best.pt, NOT final.pt.
+algo: iql
+data: data/infantry_tactical
+out: rm_runs/infantry_iql_tactical
+seed: 0
+
+model: {hidden: 256, depth: 2}
+
+iql:
+  gamma: 0.99
+  expectile: 0.7
+  beta: 1.0
+  adv_max: 100.0
+  polyak: 0.005
+  use_quality_weight: false
+  reward_scale: auto
+
+train:
+  batch_size: 1024
+  max_steps: 20000
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+  warmup: 500
+  grad_clip: 1.0
+  num_workers: 0        # forced to 0 in code: data is already an in-RAM tensor
+  log_every: 200
+  eval_every: 1000
+  ckpt_every: 5000
+  select_metric: action_mse
+  early_stop_patience: 8
+
+reward:
+  w_outpost_atk: 3.0
+  w_base_atk: 5.0
+  w_dmg_deal: 1.0
+  w_kill: 2.0
+  w_outpost_def: 4.0
+  w_base_def: 6.0
+  w_dmg_take: 1.0
+  w_death: 2.0
+  w_ego_surv: 0.02
+  w_ego_hp: 0.2
+  w_heat: 0.5
+  w_econ: 0.5
+  w_win: 20.0
+  w_final_base: 5.0

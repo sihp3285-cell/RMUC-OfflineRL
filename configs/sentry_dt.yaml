@@ -1,0 +1,42 @@
+# Sentry (哨兵) — Decision Transformer (return-conditioned) alternative.
+algo: dt
+data: data/sentry
+out: runs/sentry_dt
+seed: 0
+
+dt:
+  ctx: 30                   # context window (seconds)
+  n_embd: 128
+  n_layer: 3
+  n_head: 4
+  dropout: 0.1
+  gamma: 1.0               # returns-to-go discount
+  rtg_scale: 100.0         # divide RTG by this before feeding the model
+  max_timestep: 512
+
+train:
+  batch_size: 128          # per-GPU (sequences)
+  max_steps: 100000
+  lr: 1.0e-4
+  weight_decay: 1.0e-4
+  warmup: 1000
+  grad_clip: 0.25
+  num_workers: 4
+  log_every: 200
+  ckpt_every: 25000
+
+reward:
+  w_outpost_atk: 3.0
+  w_base_atk: 5.0
+  w_dmg_deal: 1.0
+  w_kill: 2.0
+  w_outpost_def: 4.0
+  w_base_def: 6.0
+  w_dmg_take: 1.0
+  w_death: 2.0
+  w_ego_surv: 0.02
+  w_ego_hp: 1.5
+  w_heat: 0.5
+  w_econ: 0.5
+  w_win: 20.0
+  w_final_base: 5.0

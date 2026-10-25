@@ -1,0 +1,49 @@
+# Sentry IQL v2 — reward fix from reward_model: the data says the sentry's own
+# HP loss barely correlates with winning, so drop the over-penalty w_ego_hp
+# 1.5 -> 0.2. Everything else matches sentry_iql.yaml. Needs its own dataset
+# build (reward is baked into the shards at build time).
+algo: iql
+data: data/sentry_v2
+out: rm_runs/sentry_iql_v2
+seed: 0
+
+model:
+  hidden: 256
+  depth: 2
+
+iql:
+  gamma: 0.99
+  expectile: 0.7
+  beta: 1.0
+  adv_max: 100.0
+  polyak: 0.005
+  use_quality_weight: false
+  reward_scale: auto
+
+train:
+  batch_size: 1024
+  max_steps: 100000
+  lr: 3.0e-4
+  weight_decay: 0.0
+  warmup: 1000
+  grad_clip: 1.0
+  num_workers: 4
+  log_every: 200
+  eval_every: 5000
+  ckpt_every: 10000
+
+reward:
+  w_outpost_atk: 3.0
+  w_base_atk: 5.0
+  w_dmg_deal: 1.0
+  w_kill: 2.0
+  w_outpost_def: 4.0
+  w_base_def: 6.0
+  w_dmg_take: 1.0
+  w_death: 2.0
+  w_ego_surv: 0.02
+  w_ego_hp: 0.2          # was 1.5; reward_model says HP loss ~ uncorrelated with winning
+  w_heat: 0.5
+  w_econ: 0.5
+  w_win: 20.0
+  w_final_base: 5.0
