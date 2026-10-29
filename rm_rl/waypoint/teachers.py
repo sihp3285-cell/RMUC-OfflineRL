@@ -23,7 +23,7 @@ def _load(path, sdk_dir):
 
 
 class TracedSentryTeacher:
-    """2772 teacher with a hook on drive() to expose the sentry goal.
+    """Teacher with a hook on drive() to expose the sentry goal.
 
     The hook is a read-only observer: it records the goal argument and then
     calls the original drive() with exactly the same arguments.
@@ -31,6 +31,19 @@ class TracedSentryTeacher:
 
     def __init__(self, path, sdk_dir):
         self.module = _load(path, sdk_dir)
+        self.policy_errors = 0
+        self.policy_error_messages = []
+        if hasattr(self.module, 'decide'):
+            original_decide = self.module.decide
+            def observed(*args, **kwargs):
+                try:
+                    return original_decide(*args, **kwargs)
+                except Exception as exc:
+                    self.policy_errors += 1
+                    if len(self.policy_error_messages) < 5:
+                        self.policy_error_messages.append(str(exc))
+                    raise
+            self.module.decide = observed
         self.original_drive = getattr(self.module, "drive")
         self.last_goal = None
         self.module.drive = self._drive

@@ -1,0 +1,25 @@
+{
+  "validation_confusion_true_rows_predicted_columns": [
+    [
+      26863,
+      854
+    ],
+    [
+      170,
+      1892
+    ]
+  ],
+  "class_support": [
+    27717,
+    2062
+  ],
+  "per_class_recall": [
+    0.9691885846231555,
+    0.9175557710960233
+  ],
+  "macro_recall": 0.9433721778595894,
+  "constant_training_majority_accuracy": 0.9307565734242251,
+  "validation_majority_oracle_accuracy": 0.9307565734242251,
+  "teacher_target_assignment_max_m": 0.0,
+  "note": "Validation is for model selection; it is not held-out closed-loop performance."
+}

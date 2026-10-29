@@ -133,6 +133,7 @@ class RadarTests(unittest.TestCase):
         module = SimpleNamespace(drive=lambda *a: None, act=lambda obs, state: ({}, state))
         args = SimpleNamespace(baseline='unused', side='blue', ckpt='unused', confirm_s=1., min_hold_s=2.)
         with patch('rm_rl.waypoint.radar_sim.StrategyRunner', return_value=SimpleNamespace(module=module)), patch('rm_rl.waypoint.radar_sim.Predictor') as predictor:
+            predictor.return_value.supply_anchor = (1.4, 13.)
             predictor.return_value.predict.return_value = (10.8, 7.5)
             candidate = Candidate(args, 'unused', 'radar_hysteresis')
             candidate.features = instant().observe(frame())

@@ -1,0 +1,1328 @@
+{
+  "means": {
+    "red": {
+      "baseline": {
+        "n": 5,
+        "damage_dealt": 1694.6,
+        "damage_taken_hp_proxy": 776.0,
+        "deaths": 2.0,
+        "alive_time_s": 361.91999999999996,
+        "overheat_s": 51.999999999999716,
+        "stuck_cmd_s": 2.339999999999965,
+        "goal_switches": 3.2,
+        "goal_segments": 5.8,
+        "reached_segments": 3.4,
+        "mean_reach_s": 15.200666666666663,
+        "arrival_rate": 0.6342857142857142,
+        "damage_dealt_per_alive_min": 280.7354864169246,
+        "win_rate": 0.4
+      },
+      "radar": {
+        "n": 5,
+        "damage_dealt": 1761.0,
+        "damage_taken_hp_proxy": 888.0,
+        "deaths": 2.2,
+        "alive_time_s": 374.38,
+        "overheat_s": 62.01999999999985,
+        "stuck_cmd_s": 3.06000000000001,
+        "goal_switches": 57.8,
+        "goal_segments": 60.8,
+        "reached_segments": 29.2,
+        "mean_reach_s": 1.7803506493506505,
+        "arrival_rate": 0.4882444788965872,
+        "damage_dealt_per_alive_min": 281.172154859788,
+        "win_rate": 0.0
+      },
+      "radar_hysteresis": {
+        "n": 5,
+        "damage_dealt": 1185.2,
+        "damage_taken_hp_proxy": 819.0,
+        "deaths": 1.8,
+        "alive_time_s": 369.6,
+        "overheat_s": 47.179999999999744,
+        "stuck_cmd_s": 4.339999999999937,
+        "goal_switches": 21.0,
+        "goal_segments": 23.4,
+        "reached_segments": 13.6,
+        "mean_reach_s": 3.2261300366300305,
+        "arrival_rate": 0.5826244772350666,
+        "damage_dealt_per_alive_min": 191.1045022036164,
+        "win_rate": 0.2
+      },
+      "rule": {
+        "n": 5,
+        "damage_dealt": 1544.0,
+        "damage_taken_hp_proxy": 291.0,
+        "deaths": 0.0,
+        "alive_time_s": 420.0,
+        "overheat_s": 193.96000000000004,
+        "stuck_cmd_s": 26.30000000000003,
+        "goal_switches": 33.0,
+        "goal_segments": 34.0,
+        "reached_segments": 15.6,
+        "mean_reach_s": 12.243415032679735,
+        "arrival_rate": 0.4643511527232458,
+        "damage_dealt_per_alive_min": 220.57142857142858,
+        "win_rate": 0.0
+      }
+    },
+    "blue": {
+      "baseline": {
+        "n": 5,
+        "damage_dealt": 1761.4,
+        "damage_taken_hp_proxy": 904.0,
+        "deaths": 1.6,
+        "alive_time_s": 391.58000000000004,
+        "overheat_s": 47.40000000000051,
+        "stuck_cmd_s": 2.6999999999999944,
+        "goal_switches": 5.4,
+        "goal_segments": 7.8,
+        "reached_segments": 4.8,
+        "mean_reach_s": 10.49,
+        "arrival_rate": 0.6296103896103895,
+        "damage_dealt_per_alive_min": 271.43881500136547,
+        "win_rate": 0.4
+      },
+      "radar": {
+        "n": 5,
+        "damage_dealt": 1428.0,
+        "damage_taken_hp_proxy": 843.0,
+        "deaths": 1.6,
+        "alive_time_s": 399.36,
+        "overheat_s": 53.78000000000029,
+        "stuck_cmd_s": 32.399999999999984,
+        "goal_switches": 76.6,
+        "goal_segments": 78.6,
+        "reached_segments": 27.4,
+        "mean_reach_s": 2.328290532048597,
+        "arrival_rate": 0.3491639027900435,
+        "damage_dealt_per_alive_min": 217.3327976412982,
+        "win_rate": 0.2
+      },
+      "radar_hysteresis": {
+        "n": 5,
+        "damage_dealt": 1656.4,
+        "damage_taken_hp_proxy": 896.0,
+        "deaths": 1.6,
+        "alive_time_s": 371.21999999999997,
+        "overheat_s": 51.70000000000003,
+        "stuck_cmd_s": 2.819999999999898,
+        "goal_switches": 19.2,
+        "goal_segments": 21.8,
+        "reached_segments": 12.6,
+        "mean_reach_s": 4.167614379084961,
+        "arrival_rate": 0.5657177130861342,
+        "damage_dealt_per_alive_min": 273.85689189003534,
+        "win_rate": 0.0
+      },
+      "rule": {
+        "n": 5,
+        "damage_dealt": 1549.0,
+        "damage_taken_hp_proxy": 305.0,
+        "deaths": 0.2,
+        "alive_time_s": 419.98,
+        "overheat_s": 195.26000000000062,
+        "stuck_cmd_s": 34.40000000000004,
+        "goal_switches": 31.0,
+        "goal_segments": 32.2,
+        "reached_segments": 15.8,
+        "mean_reach_s": 13.260718954248365,
+        "arrival_rate": 0.5022320964856599,
+        "damage_dealt_per_alive_min": 221.2954444935869,
+        "win_rate": 0.2
+      }
+    },
+    "both": {
+      "baseline": {
+        "n": 10,
+        "damage_dealt": 1728.0,
+        "damage_taken_hp_proxy": 840.0,
+        "deaths": 1.8,
+        "alive_time_s": 376.75,
+        "overheat_s": 49.70000000000012,
+        "stuck_cmd_s": 2.51999999999998,
+        "goal_switches": 4.3,
+        "goal_segments": 6.8,
+        "reached_segments": 4.1,
+        "mean_reach_s": 12.845333333333333,
+        "arrival_rate": 0.6319480519480519,
+        "damage_dealt_per_alive_min": 276.087150709145,
+        "win_rate": 0.4
+      },
+      "radar": {
+        "n": 10,
+        "damage_dealt": 1594.5,
+        "damage_taken_hp_proxy": 865.5,
+        "deaths": 1.9,
+        "alive_time_s": 386.87,
+        "overheat_s": 57.90000000000007,
+        "stuck_cmd_s": 17.729999999999997,
+        "goal_switches": 67.2,
+        "goal_segments": 69.7,
+        "reached_segments": 28.3,
+        "mean_reach_s": 2.054320590699624,
+        "arrival_rate": 0.4187041908433152,
+        "damage_dealt_per_alive_min": 249.25247625054308,
+        "win_rate": 0.1
+      },
+      "radar_hysteresis": {
+        "n": 10,
+        "damage_dealt": 1420.8,
+        "damage_taken_hp_proxy": 857.5,
+        "deaths": 1.7,
+        "alive_time_s": 370.40999999999997,
+        "overheat_s": 49.43999999999989,
+        "stuck_cmd_s": 3.5799999999999175,
+        "goal_switches": 20.1,
+        "goal_segments": 22.6,
+        "reached_segments": 13.1,
+        "mean_reach_s": 3.6968722078574965,
+        "arrival_rate": 0.5741710951606004,
+        "damage_dealt_per_alive_min": 232.48069704682584,
+        "win_rate": 0.1
+      },
+      "rule": {
+        "n": 10,
+        "damage_dealt": 1546.5,
+        "damage_taken_hp_proxy": 298.0,
+        "deaths": 0.1,
+        "alive_time_s": 419.98999999999995,
+        "overheat_s": 194.61000000000033,
+        "stuck_cmd_s": 30.350000000000033,
+        "goal_switches": 32.0,
+        "goal_segments": 33.1,
+        "reached_segments": 15.7,
+        "mean_reach_s": 12.752066993464052,
+        "arrival_rate": 0.48329162460445285,
+        "damage_dealt_per_alive_min": 220.93343653250776,
+        "win_rate": 0.1
+      }
+    }
+  },
+  "hysteresis_minus_reference": {
+    "baseline": {
+      "red": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": -509.4,
+          "seed_bootstrap_95_ci": [
+            -1113.0,
+            18.6
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": 43.0,
+          "seed_bootstrap_95_ci": [
+            -416.0,
+            537.0
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": -0.2,
+          "seed_bootstrap_95_ci": [
+            -1.6,
+            0.8
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 1
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": 7.680000000000007,
+          "seed_bootstrap_95_ci": [
+            -27.919999999999995,
+            48.2
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -4.819999999999965,
+          "seed_bootstrap_95_ci": [
+            -27.719999999999363,
+            19.519999999999776
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": 1.9999999999999716,
+          "seed_bootstrap_95_ci": [
+            -0.8399999999999963,
+            5.439999999999957
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": 17.8,
+          "seed_bootstrap_95_ci": [
+            14.6,
+            21.8
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": 17.6,
+          "seed_bootstrap_95_ci": [
+            14.6,
+            21.4
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": 10.2,
+          "seed_bootstrap_95_ci": [
+            8.2,
+            12.2
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": -11.974536630036635,
+          "seed_bootstrap_95_ci": [
+            -17.30935714285714,
+            -7.059252747252752
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": -0.0516612370506476,
+          "seed_bootstrap_95_ci": [
+            -0.267718772192851,
+            0.08143071321482118
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 1
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": -89.63098421330815,
+          "seed_bootstrap_95_ci": [
+            -173.87208796246497,
+            -14.676140799723868
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        }
+      },
+      "blue": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": -105.0,
+          "seed_bootstrap_95_ci": [
+            -680.8,
+            470.8
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": -8.0,
+          "seed_bootstrap_95_ci": [
+            -452.0,
+            436.0
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": 0.0,
+          "seed_bootstrap_95_ci": [
+            -1.2,
+            1.2
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 1
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -20.360000000000003,
+          "seed_bootstrap_95_ci": [
+            -46.54,
+            11.620000000000005
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 3
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": 4.299999999999521,
+          "seed_bootstrap_95_ci": [
+            -21.700000000001356,
+            23.66000000000039
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 1
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": 0.11999999999990366,
+          "seed_bootstrap_95_ci": [
+            -2.7200000000000712,
+            2.679999999999855
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": 13.8,
+          "seed_bootstrap_95_ci": [
+            10.0,
+            17.2
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": 14.0,
+          "seed_bootstrap_95_ci": [
+            9.8,
+            18.0
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": 7.8,
+          "seed_bootstrap_95_ci": [
+            3.8,
+            11.8
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": -6.322385620915038,
+          "seed_bootstrap_95_ci": [
+            -9.856470588235302,
+            -2.7883006535947734
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": -0.06389267652425544,
+          "seed_bootstrap_95_ci": [
+            -0.2178705505021294,
+            0.04949420949420953
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": 2.4180768886698276,
+          "seed_bootstrap_95_ci": [
+            -86.90488871039899,
+            89.275975934585
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        }
+      },
+      "both": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": -307.2,
+          "seed_bootstrap_95_ci": [
+            -882.7,
+            218.0
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": 17.5,
+          "seed_bootstrap_95_ci": [
+            -263.0,
+            361.5
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": -0.1,
+          "seed_bootstrap_95_ci": [
+            -1.4,
+            0.9
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 1
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -6.339999999999998,
+          "seed_bootstrap_95_ci": [
+            -37.64,
+            28.860000000000003
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -0.26000000000022183,
+          "seed_bootstrap_95_ci": [
+            -23.43000000000017,
+            20.65000000000004
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": 1.0599999999999377,
+          "seed_bootstrap_95_ci": [
+            -1.450000000000032,
+            3.909999999999904
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 1
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": 15.8,
+          "seed_bootstrap_95_ci": [
+            13.3,
+            18.9
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": 15.8,
+          "seed_bootstrap_95_ci": [
+            12.7,
+            19.6
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": 9.0,
+          "seed_bootstrap_95_ci": [
+            6.5,
+            11.5
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": -9.148461125475837,
+          "seed_bootstrap_95_ci": [
+            -11.527548319327733,
+            -6.289512820512824
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": -0.05777695678745152,
+          "seed_bootstrap_95_ci": [
+            -0.17896668548842457,
+            0.03519041345128304
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": -43.60645366231916,
+          "seed_bootstrap_95_ci": [
+            -122.9988117287925,
+            29.91024095979109
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        }
+      }
+    },
+    "rule": {
+      "red": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": -358.8,
+          "seed_bootstrap_95_ci": [
+            -829.8,
+            61.2
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": 528.0,
+          "seed_bootstrap_95_ci": [
+            254.0,
+            802.0
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": 1.8,
+          "seed_bootstrap_95_ci": [
+            0.8,
+            2.6
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 0
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -50.39999999999999,
+          "seed_bootstrap_95_ci": [
+            -75.6,
+            -22.19999999999999
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 4
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -146.78000000000029,
+          "seed_bootstrap_95_ci": [
+            -171.56000000000003,
+            -117.42000000000075
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": -21.96000000000009,
+          "seed_bootstrap_95_ci": [
+            -47.820000000000185,
+            -4.48000000000007
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": -12.0,
+          "seed_bootstrap_95_ci": [
+            -19.6,
+            -4.0
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": -10.6,
+          "seed_bootstrap_95_ci": [
+            -17.6,
+            -2.8
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": -2.0,
+          "seed_bootstrap_95_ci": [
+            -5.8,
+            3.0
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": -9.017284996049705,
+          "seed_bootstrap_95_ci": [
+            -10.06789467068879,
+            -8.108444444444443
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": 0.11827332451182093,
+          "seed_bootstrap_95_ci": [
+            -0.0010521055261843216,
+            0.19099304168513753
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 1
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": -29.466926367812185,
+          "seed_bootstrap_95_ci": [
+            -100.00001642980368,
+            29.617620419925903
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        }
+      },
+      "blue": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": 107.4,
+          "seed_bootstrap_95_ci": [
+            -472.0,
+            686.8
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": 591.0,
+          "seed_bootstrap_95_ci": [
+            83.0,
+            1133.0
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 1
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": 1.4,
+          "seed_bootstrap_95_ci": [
+            0.6,
+            2.0
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 0
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -48.75999999999999,
+          "seed_bootstrap_95_ci": [
+            -69.31999999999998,
+            -22.379999999999995
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 4
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -143.56000000000063,
+          "seed_bootstrap_95_ci": [
+            -163.4800000000007,
+            -127.56000000000067
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": -31.580000000000137,
+          "seed_bootstrap_95_ci": [
+            -48.460000000000186,
+            -16.48000000000007
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": -11.8,
+          "seed_bootstrap_95_ci": [
+            -18.6,
+            -6.2
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": -10.4,
+          "seed_bootstrap_95_ci": [
+            -17.0,
+            -5.0
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": -3.2,
+          "seed_bootstrap_95_ci": [
+            -8.4,
+            2.8
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 3
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": -9.0931045751634,
+          "seed_bootstrap_95_ci": [
+            -12.433202614379088,
+            -6.511732026143792
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": 0.06348561660047426,
+          "seed_bootstrap_95_ci": [
+            -0.09753238193874672,
+            0.21794419911449164
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": 52.5614473964484,
+          "seed_bootstrap_95_ci": [
+            -53.21048104281083,
+            158.33337583570764
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        }
+      },
+      "both": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": -125.7,
+          "seed_bootstrap_95_ci": [
+            -608.0,
+            279.6
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": 559.5,
+          "seed_bootstrap_95_ci": [
+            346.5,
+            772.5
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": 1.6,
+          "seed_bootstrap_95_ci": [
+            0.9,
+            2.2
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -49.57999999999999,
+          "seed_bootstrap_95_ci": [
+            -68.85999999999999,
+            -32.27999999999999
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -145.17000000000047,
+          "seed_bootstrap_95_ci": [
+            -165.5600000000003,
+            -123.79000000000039
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": -26.770000000000117,
+          "seed_bootstrap_95_ci": [
+            -39.08000000000017,
+            -13.780000000000063
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": -11.9,
+          "seed_bootstrap_95_ci": [
+            -18.3,
+            -6.0
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": -10.5,
+          "seed_bootstrap_95_ci": [
+            -16.3,
+            -4.8
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 4
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": -2.6,
+          "seed_bootstrap_95_ci": [
+            -6.6,
+            1.4
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": -9.055194785606554,
+          "seed_bootstrap_95_ci": [
+            -10.617510953099195,
+            -7.572245098039216
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": 0.0908794705561476,
+          "seed_bootstrap_95_ci": [
+            -0.04428137080310994,
+            0.2021438627113959
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 1
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": 11.547260514318115,
+          "seed_bootstrap_95_ci": [
+            -70.13960460760022,
+            80.51972524168028
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        }
+      }
+    },
+    "radar": {
+      "red": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": -575.8,
+          "seed_bootstrap_95_ci": [
+            -988.0,
+            -201.4
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": -69.0,
+          "seed_bootstrap_95_ci": [
+            -445.0,
+            216.0
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 1
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": -0.4,
+          "seed_bootstrap_95_ci": [
+            -1.4,
+            0.4
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 2
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -4.7800000000000065,
+          "seed_bootstrap_95_ci": [
+            -28.660000000000025,
+            19.05999999999999
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -14.840000000000092,
+          "seed_bootstrap_95_ci": [
+            -24.57999999999965,
+            -5.100000000000532
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": 1.2799999999999265,
+          "seed_bootstrap_95_ci": [
+            -0.8600000000000921,
+            4.919999999999915
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": -36.8,
+          "seed_bootstrap_95_ci": [
+            -55.6,
+            -21.6
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": -37.4,
+          "seed_bootstrap_95_ci": [
+            -55.6,
+            -22.4
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": -15.6,
+          "seed_bootstrap_95_ci": [
+            -24.6,
+            -8.4
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": 1.44577938727938,
+          "seed_bootstrap_95_ci": [
+            0.21189210789209806,
+            2.6796666666666624
+          ],
+          "positive_seed_deltas": 4,
+          "negative_seed_deltas": 1
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": 0.09437999833847956,
+          "seed_bootstrap_95_ci": [
+            0.055259152990782545,
+            0.14085635530169832
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": -90.06765265617159,
+          "seed_bootstrap_95_ci": [
+            -147.37146577811532,
+            -37.08783906762977
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        }
+      },
+      "blue": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": 228.4,
+          "seed_bootstrap_95_ci": [
+            -290.0,
+            752.2
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": 53.0,
+          "seed_bootstrap_95_ci": [
+            -199.0,
+            303.0
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": 0.0,
+          "seed_bootstrap_95_ci": [
+            -1.2,
+            1.2
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 2
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -28.139999999999976,
+          "seed_bootstrap_95_ci": [
+            -59.55999999999998,
+            5.820000000000005
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 3
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -2.080000000000264,
+          "seed_bootstrap_95_ci": [
+            -16.80000000000037,
+            12.039999999999912
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": -29.580000000000087,
+          "seed_bootstrap_95_ci": [
+            -78.62000000000015,
+            -2.960000000000087
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": -57.4,
+          "seed_bootstrap_95_ci": [
+            -73.0,
+            -41.6
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": -56.8,
+          "seed_bootstrap_95_ci": [
+            -72.0,
+            -40.4
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": -14.8,
+          "seed_bootstrap_95_ci": [
+            -20.6,
+            -9.0
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": 1.8393238470363644,
+          "seed_bootstrap_95_ci": [
+            1.2821787624140508,
+            2.4924445498629515
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": 0.2165538102960906,
+          "seed_bootstrap_95_ci": [
+            0.12770270818183063,
+            0.3171332075070668
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": 56.52409424873713,
+          "seed_bootstrap_95_ci": [
+            -49.91342539371838,
+            158.4000248331834
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        }
+      },
+      "both": {
+        "complete_seed_pairs": 5,
+        "damage_dealt": {
+          "n_seeds": 5,
+          "mean_delta": -173.7,
+          "seed_bootstrap_95_ci": [
+            -595.0,
+            281.9
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 3
+        },
+        "damage_taken_hp_proxy": {
+          "n_seeds": 5,
+          "mean_delta": -8.0,
+          "seed_bootstrap_95_ci": [
+            -167.5,
+            147.0
+          ],
+          "positive_seed_deltas": 2,
+          "negative_seed_deltas": 2
+        },
+        "deaths": {
+          "n_seeds": 5,
+          "mean_delta": -0.2,
+          "seed_bootstrap_95_ci": [
+            -0.9,
+            0.5
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 2
+        },
+        "alive_time_s": {
+          "n_seeds": 5,
+          "mean_delta": -16.45999999999999,
+          "seed_bootstrap_95_ci": [
+            -37.440000000000005,
+            1.1300000000000465
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "overheat_s": {
+          "n_seeds": 5,
+          "mean_delta": -8.460000000000178,
+          "seed_bootstrap_95_ci": [
+            -17.660000000000345,
+            1.4100000000001813
+          ],
+          "positive_seed_deltas": 1,
+          "negative_seed_deltas": 4
+        },
+        "stuck_cmd_s": {
+          "n_seeds": 5,
+          "mean_delta": -14.15000000000008,
+          "seed_bootstrap_95_ci": [
+            -36.98000000000012,
+            -1.590000000000065
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_switches": {
+          "n_seeds": 5,
+          "mean_delta": -47.1,
+          "seed_bootstrap_95_ci": [
+            -64.0,
+            -34.1
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "goal_segments": {
+          "n_seeds": 5,
+          "mean_delta": -47.1,
+          "seed_bootstrap_95_ci": [
+            -63.3,
+            -34.5
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "reached_segments": {
+          "n_seeds": 5,
+          "mean_delta": -15.2,
+          "seed_bootstrap_95_ci": [
+            -20.1,
+            -10.3
+          ],
+          "positive_seed_deltas": 0,
+          "negative_seed_deltas": 5
+        },
+        "mean_reach_s": {
+          "n_seeds": 5,
+          "mean_delta": 1.642551617157872,
+          "seed_bootstrap_95_ci": [
+            0.8100459393547546,
+            2.47505729496099
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "arrival_rate": {
+          "n_seeds": 5,
+          "mean_delta": 0.1554669043172851,
+          "seed_bootstrap_95_ci": [
+            0.09948341479289,
+            0.21196738257391812
+          ],
+          "positive_seed_deltas": 5,
+          "negative_seed_deltas": 0
+        },
+        "damage_dealt_per_alive_min": {
+          "n_seeds": 5,
+          "mean_delta": -16.771779203717234,
+          "seed_bootstrap_95_ci": [
+            -88.75121467774837,
+            55.534343836451534
+          ],
+          "positive_seed_deltas": 3,
+          "negative_seed_deltas": 2
+        }
+      }
+    }
+  },
+  "error_totals": {
+    "prediction_errors": 0,
+    "candidate_policy_errors": 0
+  },
+  "notes": [
+    "Confidence intervals resample seeds; red and blue remain paired within each seed.",
+    "Damage is the primary screening endpoint; deaths, survival, wins and switching are secondary.",
+    "Baseline uses its original Arena observations; rule and both models share the radar observation boundary.",
+    "Arrival rates depend on the number of goal segments; they are not a standalone success criterion.",
+    "One opponent and provisional radar semantics; these results cannot establish real-world deployment efficacy."
+  ]
+}

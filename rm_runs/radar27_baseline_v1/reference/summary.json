@@ -1,0 +1,70 @@
+{
+  "means": {
+    "red": {
+      "radar_hysteresis": {
+        "n": 5,
+        "damage_dealt": 1745.0,
+        "damage_taken_hp_proxy": 780.0,
+        "deaths": 2.0,
+        "alive_time_s": 365.93999999999994,
+        "overheat_s": 67.40000000000066,
+        "stuck_cmd_s": 5.359999999999957,
+        "goal_switches": 25.0,
+        "goal_segments": 27.6,
+        "reached_segments": 12.2,
+        "mean_reach_s": 4.459333333333328,
+        "arrival_rate": 0.48875922838771135,
+        "damage_dealt_per_alive_min": 278.3147927424946,
+        "win_rate": 0.0
+      }
+    },
+    "blue": {
+      "radar_hysteresis": {
+        "n": 5,
+        "damage_dealt": 1758.8,
+        "damage_taken_hp_proxy": 811.0,
+        "deaths": 0.8,
+        "alive_time_s": 397.1,
+        "overheat_s": 52.739999999999974,
+        "stuck_cmd_s": 3.33999999999995,
+        "goal_switches": 22.6,
+        "goal_segments": 24.2,
+        "reached_segments": 15.0,
+        "mean_reach_s": 4.150404761904759,
+        "arrival_rate": 0.6009160660311555,
+        "damage_dealt_per_alive_min": 268.50073188743687,
+        "win_rate": 0.4
+      }
+    },
+    "both": {
+      "radar_hysteresis": {
+        "n": 10,
+        "damage_dealt": 1751.9,
+        "damage_taken_hp_proxy": 795.5,
+        "deaths": 1.4,
+        "alive_time_s": 381.52000000000004,
+        "overheat_s": 60.07000000000031,
+        "stuck_cmd_s": 4.3499999999999535,
+        "goal_switches": 23.8,
+        "goal_segments": 25.9,
+        "reached_segments": 13.6,
+        "mean_reach_s": 4.304869047619044,
+        "arrival_rate": 0.5448376472094334,
+        "damage_dealt_per_alive_min": 273.4077623149658,
+        "win_rate": 0.2
+      }
+    }
+  },
+  "hysteresis_minus_reference": {},
+  "error_totals": {
+    "prediction_errors": 0,
+    "candidate_policy_errors": 0
+  },
+  "notes": [
+    "Confidence intervals resample seeds; red and blue remain paired within each seed.",
+    "Damage is the primary screening endpoint; deaths, survival, wins and switching are secondary.",
+    "Baseline uses its original Arena observations; rule and both models share the radar observation boundary.",
+    "Arrival rates depend on the number of goal segments; they are not a standalone success criterion.",
+    "One opponent and provisional radar semantics; these results cannot establish real-world deployment efficacy."
+  ]
+}

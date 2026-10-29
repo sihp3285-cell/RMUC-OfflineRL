@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import hashlib
 from pathlib import Path
 
 import numpy as np
@@ -57,6 +58,7 @@ def load_sequence_shards(paths, radar=False):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", nargs="+", required=True)
+    parser.add_argument("--actions", help="Radar action contract JSON; default preserves legacy four points")
     parser.add_argument("--out", default="rm_runs/waypoint_cls")
     parser.add_argument("--epochs", type=int, default=40)
     parser.add_argument("--batch", type=int, default=1024)
@@ -79,7 +81,13 @@ def main():
         files.extend(sorted(Path(entry).glob("match-*.npz")))
     if not files:
         raise SystemExit("no match-*.npz")
-    val_files = files[::args.val_every]
+    if args.val_every < 2:
+        raise SystemExit('val-every must be at least 2')
+    if len(files) != len(set(p.resolve() for p in files)):
+        raise SystemExit('duplicate dataset paths')
+    # Keep mirrored sides/replays with the same match identity in one split.
+    val_groups = set(sorted({path.stem for path in files})[::args.val_every])
+    val_files = [path for path in files if path.stem in val_groups]
     train_files = [path for path in files if path not in set(val_files)]
     if not train_files or not val_files:
         raise SystemExit("need disjoint training and validation matches")
@@ -92,8 +100,11 @@ def main():
         raise SystemExit("cannot mix observation schemas")
     schema = schemas.pop()
     from rm_rl.waypoint.radar import SCHEMA, ANCHORS, FEATURE_DIM as RADAR_DIM, contract
-    radar = schema == SCHEMA
-    if schema not in ("arena307", SCHEMA):
+    from rm_rl.waypoint.observation import SCHEMAS, description
+    radar = schema in SCHEMAS
+    if radar:
+        RADAR_DIM, radar_contract = description(schema)
+    if schema not in ("arena307", *SCHEMAS):
         raise SystemExit(f"unknown observation schema: {schema}")
 
     x_train, _, goal_train, _ = load_sequence_shards(train_files, radar)
@@ -102,12 +113,24 @@ def main():
     if radar:
         if x_train.shape[1] != RADAR_DIM or x_val.shape[1] != RADAR_DIM:
             raise SystemExit("radar feature dimension mismatch")
-        anchors = ANCHORS.copy()
+        from rm_rl.waypoint.action_space import load, validate
+        action_spec = load(args.actions)
+        anchors = validate(action_spec)
+        for path in files:
+            with np.load(path) as shard:
+                if 'observation_contract' in shard and json.loads(str(shard['observation_contract'].item())) != json.loads(json.dumps(radar_contract)):
+                    raise SystemExit(f'observation contract mismatch: {path}')
         counts = np.bincount(assign(goal_train, anchors)[0], minlength=len(anchors))
     else:
         anchors, counts = build_anchors(goal_train, args.max_anchors, merge_m=args.merge_m)
     y_train, train_d = assign(goal_train, anchors)
     y_val, val_d = assign(goal_val, anchors)
+    if radar and args.actions:
+        tolerance = action_spec['max_assignment_error_m']
+        if max(train_d.max(), val_d.max()) > tolerance:
+            raise SystemExit('teacher goals are outside the declared action vocabulary')
+        if (counts == 0).any() or (np.bincount(y_val, minlength=len(anchors)) == 0).any():
+            raise SystemExit('missing action coverage in training or validation; collect more scenarios first')
     print(json.dumps({"files": len(files), "train": len(train_files), "val": len(val_files),
                       "anchors": anchors.round(2).tolist(), "counts": counts.tolist(),
                       "train_assign_mean_m": float(train_d.mean()),
@@ -136,6 +159,8 @@ def main():
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(1, args.epochs))
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+    if any(out.iterdir()):
+        raise SystemExit('use a fresh model output directory')
     np.savez(out / "norm_stats.npz", mean=mean, std=std)
     weight_t = torch.from_numpy(class_weight).to(device)
 
@@ -176,7 +201,8 @@ def main():
             torch.save({"state_dict": model.state_dict(), "obs_dim": x_train.shape[1],
                         "base_dim": RADAR_DIM if radar else FEATURE_DIM,
                         "observation_schema": schema,
-                        "observation_contract": contract() if radar else None,
+                        "observation_contract": radar_contract if radar else None,
+                        "action_contract": action_spec if radar else None,
                         "n_classes": len(anchors), "hidden": args.hidden, "depth": args.depth,
                         "anchors": anchors, "mean": mean, "std": std,
                         "metrics": row, "epoch": epoch, "model_type": "classifier"},
@@ -196,10 +222,29 @@ def main():
         "history": history,
         "config": vars(args),
         "observation_schema": schema,
+        "action_contract": action_spec if radar else None,
+        "data_sha256": {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in files},
         "train_files": [str(p) for p in train_files],
         "val_files": [str(p) for p in val_files],
     }
     (out / "metrics.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+    selected = torch.load(out / "best.pt", map_location=device, weights_only=False)
+    model.load_state_dict(selected['state_dict'])
+    model.eval()
+    with torch.no_grad():
+        pred = model(val_x).argmax(dim=1).cpu().numpy()
+    confusion = np.zeros((len(anchors), len(anchors)), dtype=np.int64)
+    np.add.at(confusion, (y_val, pred), 1)
+    support = confusion.sum(axis=1)
+    recall = [float(confusion[i,i] / n) if n else None for i,n in enumerate(support)]
+    diagnostics = {'validation_confusion_true_rows_predicted_columns':confusion.tolist(),
+                   'class_support':support.tolist(), 'per_class_recall':recall,
+                   'macro_recall':float(np.mean([x for x in recall if x is not None])),
+                   'constant_training_majority_accuracy':float(np.mean(y_val == counts.argmax())),
+                   'validation_majority_oracle_accuracy':float(support.max()/support.sum()),
+                   'teacher_target_assignment_max_m':float(max(train_d.max(),val_d.max())),
+                   'note':'Validation is for model selection; it is not held-out closed-loop performance.'}
+    (out / 'diagnostics.json').write_text(json.dumps(diagnostics, indent=2))
     print(json.dumps({k: report[k] for k in ("best_epoch", "best", "baseline_central", "baseline_ego")},
                      ensure_ascii=False, indent=2))
 

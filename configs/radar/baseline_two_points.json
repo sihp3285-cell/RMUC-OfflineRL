@@ -1,0 +1,7 @@
+{
+  "schema": "radar-waypoints-v1",
+  "names": ["own_central", "supply"],
+  "anchors": [[10.8, 7.5], [1.4, 13.0]],
+  "supply_index": 1,
+  "max_assignment_error_m": 0.05
+}

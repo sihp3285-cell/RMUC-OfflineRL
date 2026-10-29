@@ -1,0 +1,962 @@
+{
+  "schema": "radar27-protocol-20261029-v1",
+  "feature_names": [
+    "remaining_s.value",
+    "remaining_s.valid",
+    "remaining_s.age_s_div5",
+    "ally.1.x.value",
+    "ally.1.x.valid",
+    "ally.1.x.age_s_div5",
+    "ally.1.y.value",
+    "ally.1.y.valid",
+    "ally.1.y.age_s_div5",
+    "ally.1.hp.value",
+    "ally.1.hp.valid",
+    "ally.1.hp.age_s_div5",
+    "ally.3.x.value",
+    "ally.3.x.valid",
+    "ally.3.x.age_s_div5",
+    "ally.3.y.value",
+    "ally.3.y.valid",
+    "ally.3.y.age_s_div5",
+    "ally.3.hp.value",
+    "ally.3.hp.valid",
+    "ally.3.hp.age_s_div5",
+    "ally.4.x.value",
+    "ally.4.x.valid",
+    "ally.4.x.age_s_div5",
+    "ally.4.y.value",
+    "ally.4.y.valid",
+    "ally.4.y.age_s_div5",
+    "ally.4.hp.value",
+    "ally.4.hp.valid",
+    "ally.4.hp.age_s_div5",
+    "ally.7.x.value",
+    "ally.7.x.valid",
+    "ally.7.x.age_s_div5",
+    "ally.7.y.value",
+    "ally.7.y.valid",
+    "ally.7.y.age_s_div5",
+    "ally.7.hp.value",
+    "ally.7.hp.valid",
+    "ally.7.hp.age_s_div5",
+    "ally.7.allowance.value",
+    "ally.7.allowance.valid",
+    "ally.7.allowance.age_s_div5",
+    "ally.7.alive.value",
+    "ally.7.alive.valid",
+    "ally.7.alive.age_s_div5",
+    "ally.7.defense_buff.value",
+    "ally.7.defense_buff.valid",
+    "ally.7.defense_buff.age_s_div5",
+    "ally.7.vulnerability.value",
+    "ally.7.vulnerability.valid",
+    "ally.7.vulnerability.age_s_div5",
+    "ally.7.attack_multiplier.value",
+    "ally.7.attack_multiplier.valid",
+    "ally.7.attack_multiplier.age_s_div5",
+    "ally.7.cooling_bonus.value",
+    "ally.7.cooling_bonus.valid",
+    "ally.7.cooling_bonus.age_s_div5",
+    "ally.7.posture_attack.value",
+    "ally.7.posture_attack.valid",
+    "ally.7.posture_attack.age_s_div5",
+    "ally.7.posture_defense.value",
+    "ally.7.posture_defense.valid",
+    "ally.7.posture_defense.age_s_div5",
+    "ally.7.posture_move.value",
+    "ally.7.posture_move.valid",
+    "ally.7.posture_move.age_s_div5",
+    "ally.base_hp.value",
+    "ally.base_hp.valid",
+    "ally.base_hp.age_s_div5",
+    "ally.outpost_hp.value",
+    "ally.outpost_hp.valid",
+    "ally.outpost_hp.age_s_div5",
+    "ally.control_degree.value",
+    "ally.control_degree.valid",
+    "ally.control_degree.age_s_div5",
+    "ally.base.ally_control_full.value",
+    "ally.base.ally_control_full.valid",
+    "ally.base.ally_control_full.age_s_div5",
+    "ally.base.ally_control_temporary.value",
+    "ally.base.ally_control_temporary.valid",
+    "ally.base.ally_control_temporary.age_s_div5",
+    "ally.base.ally_control_none.value",
+    "ally.base.ally_control_none.valid",
+    "ally.base.ally_control_none.age_s_div5",
+    "ally.base.enemy_control_full.value",
+    "ally.base.enemy_control_full.valid",
+    "ally.base.enemy_control_full.age_s_div5",
+    "ally.base.enemy_control_temporary.value",
+    "ally.base.enemy_control_temporary.valid",
+    "ally.base.enemy_control_temporary.age_s_div5",
+    "ally.base.enemy_control_none.value",
+    "ally.base.enemy_control_none.valid",
+    "ally.base.enemy_control_none.age_s_div5",
+    "ally.outpost.ally_control_full.value",
+    "ally.outpost.ally_control_full.valid",
+    "ally.outpost.ally_control_full.age_s_div5",
+    "ally.outpost.ally_control_temporary.value",
+    "ally.outpost.ally_control_temporary.valid",
+    "ally.outpost.ally_control_temporary.age_s_div5",
+    "ally.outpost.ally_control_none.value",
+    "ally.outpost.ally_control_none.valid",
+    "ally.outpost.ally_control_none.age_s_div5",
+    "ally.outpost.enemy_control_full.value",
+    "ally.outpost.enemy_control_full.valid",
+    "ally.outpost.enemy_control_full.age_s_div5",
+    "ally.outpost.enemy_control_temporary.value",
+    "ally.outpost.enemy_control_temporary.valid",
+    "ally.outpost.enemy_control_temporary.age_s_div5",
+    "ally.outpost.enemy_control_none.value",
+    "ally.outpost.enemy_control_none.valid",
+    "ally.outpost.enemy_control_none.age_s_div5",
+    "enemy.1.x.value",
+    "enemy.1.x.valid",
+    "enemy.1.x.age_s_div5",
+    "enemy.1.y.value",
+    "enemy.1.y.valid",
+    "enemy.1.y.age_s_div5",
+    "enemy.1.hp.value",
+    "enemy.1.hp.valid",
+    "enemy.1.hp.age_s_div5",
+    "enemy.1.allowance.value",
+    "enemy.1.allowance.valid",
+    "enemy.1.allowance.age_s_div5",
+    "enemy.1.alive.value",
+    "enemy.1.alive.valid",
+    "enemy.1.alive.age_s_div5",
+    "enemy.1.invulnerable.value",
+    "enemy.1.invulnerable.valid",
+    "enemy.1.invulnerable.age_s_div5",
+    "enemy.1.weak.value",
+    "enemy.1.weak.valid",
+    "enemy.1.weak.age_s_div5",
+    "enemy.1.defense_buff.value",
+    "enemy.1.defense_buff.valid",
+    "enemy.1.defense_buff.age_s_div5",
+    "enemy.1.vulnerability.value",
+    "enemy.1.vulnerability.valid",
+    "enemy.1.vulnerability.age_s_div5",
+    "enemy.1.attack_multiplier.value",
+    "enemy.1.attack_multiplier.valid",
+    "enemy.1.attack_multiplier.age_s_div5",
+    "enemy.1.cooling_bonus.value",
+    "enemy.1.cooling_bonus.valid",
+    "enemy.1.cooling_bonus.age_s_div5",
+    "enemy.3.x.value",
+    "enemy.3.x.valid",
+    "enemy.3.x.age_s_div5",
+    "enemy.3.y.value",
+    "enemy.3.y.valid",
+    "enemy.3.y.age_s_div5",
+    "enemy.3.hp.value",
+    "enemy.3.hp.valid",
+    "enemy.3.hp.age_s_div5",
+    "enemy.3.allowance.value",
+    "enemy.3.allowance.valid",
+    "enemy.3.allowance.age_s_div5",
+    "enemy.3.alive.value",
+    "enemy.3.alive.valid",
+    "enemy.3.alive.age_s_div5",
+    "enemy.3.invulnerable.value",
+    "enemy.3.invulnerable.valid",
+    "enemy.3.invulnerable.age_s_div5",
+    "enemy.3.weak.value",
+    "enemy.3.weak.valid",
+    "enemy.3.weak.age_s_div5",
+    "enemy.3.defense_buff.value",
+    "enemy.3.defense_buff.valid",
+    "enemy.3.defense_buff.age_s_div5",
+    "enemy.3.vulnerability.value",
+    "enemy.3.vulnerability.valid",
+    "enemy.3.vulnerability.age_s_div5",
+    "enemy.3.attack_multiplier.value",
+    "enemy.3.attack_multiplier.valid",
+    "enemy.3.attack_multiplier.age_s_div5",
+    "enemy.3.cooling_bonus.value",
+    "enemy.3.cooling_bonus.valid",
+    "enemy.3.cooling_bonus.age_s_div5",
+    "enemy.4.x.value",
+    "enemy.4.x.valid",
+    "enemy.4.x.age_s_div5",
+    "enemy.4.y.value",
+    "enemy.4.y.valid",
+    "enemy.4.y.age_s_div5",
+    "enemy.4.hp.value",
+    "enemy.4.hp.valid",
+    "enemy.4.hp.age_s_div5",
+    "enemy.4.allowance.value",
+    "enemy.4.allowance.valid",
+    "enemy.4.allowance.age_s_div5",
+    "enemy.4.alive.value",
+    "enemy.4.alive.valid",
+    "enemy.4.alive.age_s_div5",
+    "enemy.4.invulnerable.value",
+    "enemy.4.invulnerable.valid",
+    "enemy.4.invulnerable.age_s_div5",
+    "enemy.4.weak.value",
+    "enemy.4.weak.valid",
+    "enemy.4.weak.age_s_div5",
+    "enemy.4.defense_buff.value",
+    "enemy.4.defense_buff.valid",
+    "enemy.4.defense_buff.age_s_div5",
+    "enemy.4.vulnerability.value",
+    "enemy.4.vulnerability.valid",
+    "enemy.4.vulnerability.age_s_div5",
+    "enemy.4.attack_multiplier.value",
+    "enemy.4.attack_multiplier.valid",
+    "enemy.4.attack_multiplier.age_s_div5",
+    "enemy.4.cooling_bonus.value",
+    "enemy.4.cooling_bonus.valid",
+    "enemy.4.cooling_bonus.age_s_div5",
+    "enemy.7.x.value",
+    "enemy.7.x.valid",
+    "enemy.7.x.age_s_div5",
+    "enemy.7.y.value",
+    "enemy.7.y.valid",
+    "enemy.7.y.age_s_div5",
+    "enemy.7.hp.value",
+    "enemy.7.hp.valid",
+    "enemy.7.hp.age_s_div5",
+    "enemy.7.allowance.value",
+    "enemy.7.allowance.valid",
+    "enemy.7.allowance.age_s_div5",
+    "enemy.7.alive.value",
+    "enemy.7.alive.valid",
+    "enemy.7.alive.age_s_div5",
+    "enemy.7.invulnerable.value",
+    "enemy.7.invulnerable.valid",
+    "enemy.7.invulnerable.age_s_div5",
+    "enemy.7.weak.value",
+    "enemy.7.weak.valid",
+    "enemy.7.weak.age_s_div5",
+    "enemy.7.defense_buff.value",
+    "enemy.7.defense_buff.valid",
+    "enemy.7.defense_buff.age_s_div5",
+    "enemy.7.vulnerability.value",
+    "enemy.7.vulnerability.valid",
+    "enemy.7.vulnerability.age_s_div5",
+    "enemy.7.attack_multiplier.value",
+    "enemy.7.attack_multiplier.valid",
+    "enemy.7.attack_multiplier.age_s_div5",
+    "enemy.7.cooling_bonus.value",
+    "enemy.7.cooling_bonus.valid",
+    "enemy.7.cooling_bonus.age_s_div5",
+    "enemy.7.posture_attack.value",
+    "enemy.7.posture_attack.valid",
+    "enemy.7.posture_attack.age_s_div5",
+    "enemy.7.posture_defense.value",
+    "enemy.7.posture_defense.valid",
+    "enemy.7.posture_defense.age_s_div5",
+    "enemy.7.posture_move.value",
+    "enemy.7.posture_move.valid",
+    "enemy.7.posture_move.age_s_div5",
+    "enemy.base_hp.value",
+    "enemy.base_hp.valid",
+    "enemy.base_hp.age_s_div5",
+    "enemy.outpost_hp.value",
+    "enemy.outpost_hp.valid",
+    "enemy.outpost_hp.age_s_div5",
+    "enemy.control_degree.value",
+    "enemy.control_degree.valid",
+    "enemy.control_degree.age_s_div5",
+    "enemy.base.ally_control_full.value",
+    "enemy.base.ally_control_full.valid",
+    "enemy.base.ally_control_full.age_s_div5",
+    "enemy.base.ally_control_temporary.value",
+    "enemy.base.ally_control_temporary.valid",
+    "enemy.base.ally_control_temporary.age_s_div5",
+    "enemy.base.ally_control_none.value",
+    "enemy.base.ally_control_none.valid",
+    "enemy.base.ally_control_none.age_s_div5",
+    "enemy.base.enemy_control_full.value",
+    "enemy.base.enemy_control_full.valid",
+    "enemy.base.enemy_control_full.age_s_div5",
+    "enemy.base.enemy_control_temporary.value",
+    "enemy.base.enemy_control_temporary.valid",
+    "enemy.base.enemy_control_temporary.age_s_div5",
+    "enemy.base.enemy_control_none.value",
+    "enemy.base.enemy_control_none.valid",
+    "enemy.base.enemy_control_none.age_s_div5",
+    "enemy.outpost.ally_control_full.value",
+    "enemy.outpost.ally_control_full.valid",
+    "enemy.outpost.ally_control_full.age_s_div5",
+    "enemy.outpost.ally_control_temporary.value",
+    "enemy.outpost.ally_control_temporary.valid",
+    "enemy.outpost.ally_control_temporary.age_s_div5",
+    "enemy.outpost.ally_control_none.value",
+    "enemy.outpost.ally_control_none.valid",
+    "enemy.outpost.ally_control_none.age_s_div5",
+    "enemy.outpost.enemy_control_full.value",
+    "enemy.outpost.enemy_control_full.valid",
+    "enemy.outpost.enemy_control_full.age_s_div5",
+    "enemy.outpost.enemy_control_temporary.value",
+    "enemy.outpost.enemy_control_temporary.valid",
+    "enemy.outpost.enemy_control_temporary.age_s_div5",
+    "enemy.outpost.enemy_control_none.value",
+    "enemy.outpost.enemy_control_none.valid",
+    "enemy.outpost.enemy_control_none.age_s_div5",
+    "damage_difference.value",
+    "damage_difference.valid",
+    "damage_difference.age_s_div5",
+    "ally.7.max_hp.value",
+    "ally.7.max_hp.valid",
+    "ally.7.max_hp.age_s_div5",
+    "ally.7.max_heat.value",
+    "ally.7.max_heat.valid",
+    "ally.7.max_heat.age_s_div5",
+    "ally.7.cooling_rate.value",
+    "ally.7.cooling_rate.valid",
+    "ally.7.cooling_rate.age_s_div5",
+    "ally.7.heat.value",
+    "ally.7.heat.valid",
+    "ally.7.heat.age_s_div5",
+    "ally.7.buffer_energy_j.value",
+    "ally.7.buffer_energy_j.valid",
+    "ally.7.buffer_energy_j.age_s_div5",
+    "ally.7.fortress_reserve.value",
+    "ally.7.fortress_reserve.valid",
+    "ally.7.fortress_reserve.age_s_div5"
+  ],
+  "fields": [
+    {
+      "name": "remaining_s",
+      "channel": "0001",
+      "scale": 420
+    },
+    {
+      "name": "ally.1.x",
+      "channel": "020b",
+      "scale": 28
+    },
+    {
+      "name": "ally.1.y",
+      "channel": "020b",
+      "scale": 15
+    },
+    {
+      "name": "ally.1.hp",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "ally.3.x",
+      "channel": "020b",
+      "scale": 28
+    },
+    {
+      "name": "ally.3.y",
+      "channel": "020b",
+      "scale": 15
+    },
+    {
+      "name": "ally.3.hp",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "ally.4.x",
+      "channel": "020b",
+      "scale": 28
+    },
+    {
+      "name": "ally.4.y",
+      "channel": "020b",
+      "scale": 15
+    },
+    {
+      "name": "ally.4.hp",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "ally.7.x",
+      "channel": "0203",
+      "scale": 28
+    },
+    {
+      "name": "ally.7.y",
+      "channel": "0203",
+      "scale": 15
+    },
+    {
+      "name": "ally.7.hp",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "ally.7.allowance",
+      "channel": "0208",
+      "scale": 700
+    },
+    {
+      "name": "ally.7.alive",
+      "channel": "0201",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.7.defense_buff",
+      "channel": "0204",
+      "scale": 1
+    },
+    {
+      "name": "ally.7.vulnerability",
+      "channel": "0204",
+      "scale": 1
+    },
+    {
+      "name": "ally.7.attack_multiplier",
+      "channel": "0204",
+      "scale": 3
+    },
+    {
+      "name": "ally.7.cooling_bonus",
+      "channel": "0204",
+      "scale": 100
+    },
+    {
+      "name": "ally.7.posture_attack",
+      "channel": "020d",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.7.posture_defense",
+      "channel": "020d",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.7.posture_move",
+      "channel": "020d",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.base_hp",
+      "channel": "0003",
+      "scale": 10000
+    },
+    {
+      "name": "ally.outpost_hp",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "ally.control_degree",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "ally.base.ally_control_full",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.base.ally_control_temporary",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.base.ally_control_none",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.base.enemy_control_full",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.base.enemy_control_temporary",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.base.enemy_control_none",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.outpost.ally_control_full",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.outpost.ally_control_temporary",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.outpost.ally_control_none",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.outpost.enemy_control_full",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.outpost.enemy_control_temporary",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "ally.outpost.enemy_control_none",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.1.x",
+      "channel": "0a01",
+      "scale": 28
+    },
+    {
+      "name": "enemy.1.y",
+      "channel": "0a01",
+      "scale": 15
+    },
+    {
+      "name": "enemy.1.hp",
+      "channel": "0a02",
+      "scale": 1000
+    },
+    {
+      "name": "enemy.1.allowance",
+      "channel": "0a03",
+      "scale": 700
+    },
+    {
+      "name": "enemy.1.alive",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.1.invulnerable",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.1.weak",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.1.defense_buff",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.1.vulnerability",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.1.attack_multiplier",
+      "channel": "0a05",
+      "scale": 3
+    },
+    {
+      "name": "enemy.1.cooling_bonus",
+      "channel": "0a05",
+      "scale": 100
+    },
+    {
+      "name": "enemy.3.x",
+      "channel": "0a01",
+      "scale": 28
+    },
+    {
+      "name": "enemy.3.y",
+      "channel": "0a01",
+      "scale": 15
+    },
+    {
+      "name": "enemy.3.hp",
+      "channel": "0a02",
+      "scale": 1000
+    },
+    {
+      "name": "enemy.3.allowance",
+      "channel": "0a03",
+      "scale": 700
+    },
+    {
+      "name": "enemy.3.alive",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.3.invulnerable",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.3.weak",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.3.defense_buff",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.3.vulnerability",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.3.attack_multiplier",
+      "channel": "0a05",
+      "scale": 3
+    },
+    {
+      "name": "enemy.3.cooling_bonus",
+      "channel": "0a05",
+      "scale": 100
+    },
+    {
+      "name": "enemy.4.x",
+      "channel": "0a01",
+      "scale": 28
+    },
+    {
+      "name": "enemy.4.y",
+      "channel": "0a01",
+      "scale": 15
+    },
+    {
+      "name": "enemy.4.hp",
+      "channel": "0a02",
+      "scale": 1000
+    },
+    {
+      "name": "enemy.4.allowance",
+      "channel": "0a03",
+      "scale": 700
+    },
+    {
+      "name": "enemy.4.alive",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.4.invulnerable",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.4.weak",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.4.defense_buff",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.4.vulnerability",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.4.attack_multiplier",
+      "channel": "0a05",
+      "scale": 3
+    },
+    {
+      "name": "enemy.4.cooling_bonus",
+      "channel": "0a05",
+      "scale": 100
+    },
+    {
+      "name": "enemy.7.x",
+      "channel": "0a01",
+      "scale": 28
+    },
+    {
+      "name": "enemy.7.y",
+      "channel": "0a01",
+      "scale": 15
+    },
+    {
+      "name": "enemy.7.hp",
+      "channel": "0a02",
+      "scale": 1000
+    },
+    {
+      "name": "enemy.7.allowance",
+      "channel": "0a03",
+      "scale": 700
+    },
+    {
+      "name": "enemy.7.alive",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.7.invulnerable",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.7.weak",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.7.defense_buff",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.7.vulnerability",
+      "channel": "0a05",
+      "scale": 1
+    },
+    {
+      "name": "enemy.7.attack_multiplier",
+      "channel": "0a05",
+      "scale": 3
+    },
+    {
+      "name": "enemy.7.cooling_bonus",
+      "channel": "0a05",
+      "scale": 100
+    },
+    {
+      "name": "enemy.7.posture_attack",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.7.posture_defense",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.7.posture_move",
+      "channel": "0a05",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.base_hp",
+      "channel": "0003",
+      "scale": 10000
+    },
+    {
+      "name": "enemy.outpost_hp",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "enemy.control_degree",
+      "channel": "0003",
+      "scale": 1000
+    },
+    {
+      "name": "enemy.base.ally_control_full",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.base.ally_control_temporary",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.base.ally_control_none",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.base.enemy_control_full",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.base.enemy_control_temporary",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.base.enemy_control_none",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.outpost.ally_control_full",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.outpost.ally_control_temporary",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.outpost.ally_control_none",
+      "channel": "0101",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.outpost.enemy_control_full",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.outpost.enemy_control_temporary",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "enemy.outpost.enemy_control_none",
+      "channel": "0a04",
+      "scale": 1.0
+    },
+    {
+      "name": "damage_difference",
+      "channel": "0003",
+      "scale": 10000
+    },
+    {
+      "name": "ally.7.max_hp",
+      "channel": "0201",
+      "scale": 1000
+    },
+    {
+      "name": "ally.7.max_heat",
+      "channel": "0201",
+      "scale": 500
+    },
+    {
+      "name": "ally.7.cooling_rate",
+      "channel": "0201",
+      "scale": 100
+    },
+    {
+      "name": "ally.7.heat",
+      "channel": "0202",
+      "scale": 500
+    },
+    {
+      "name": "ally.7.buffer_energy_j",
+      "channel": "0202",
+      "scale": 100
+    },
+    {
+      "name": "ally.7.fortress_reserve",
+      "channel": "0208",
+      "scale": 700
+    }
+  ],
+  "messages": {
+    "0001": {
+      "length": 11,
+      "source_rate_hz": 1,
+      "route": "direct"
+    },
+    "0003": {
+      "length": 24,
+      "source_rate_hz": 3,
+      "route": "direct"
+    },
+    "0101": {
+      "length": 8,
+      "source_rate_hz": 1,
+      "route": "direct"
+    },
+    "0a01": {
+      "length": 24,
+      "source_rate_hz": 10,
+      "route": "wireless"
+    },
+    "0a02": {
+      "length": 12,
+      "source_rate_hz": 10,
+      "route": "wireless"
+    },
+    "0a03": {
+      "length": 10,
+      "source_rate_hz": 10,
+      "route": "wireless"
+    },
+    "0a04": {
+      "length": 12,
+      "source_rate_hz": 10,
+      "route": "wireless"
+    },
+    "0a05": {
+      "length": 47,
+      "source_rate_hz": 10,
+      "route": "wireless"
+    },
+    "0201": {
+      "length": 17,
+      "source_rate_hz": 10,
+      "route": "relay"
+    },
+    "0202": {
+      "length": 14,
+      "source_rate_hz": 10,
+      "route": "relay"
+    },
+    "0203": {
+      "length": 12,
+      "source_rate_hz": 1,
+      "route": "relay"
+    },
+    "0204": {
+      "length": 7,
+      "source_rate_hz": 3,
+      "route": "relay"
+    },
+    "0208": {
+      "length": 8,
+      "source_rate_hz": 10,
+      "route": "relay"
+    },
+    "020b": {
+      "length": 40,
+      "source_rate_hz": 1,
+      "route": "relay"
+    },
+    "020d": {
+      "length": 14,
+      "source_rate_hz": 1,
+      "route": "relay"
+    }
+  },
+  "protocol_reference": "RM2027 V1.0.0 20261029, printed pp.7-24,39-44",
+  "ground_slots": [
+    1,
+    3,
+    4,
+    7
+  ],
+  "default_channel_config": {
+    "latency_s": 0.13,
+    "loss": 0.01,
+    "position_noise_m": 0.0,
+    "sentry_relay": true,
+    "ally_relay": true,
+    "enemy_feed": true,
+    "fast_ttl_s": 0.6,
+    "slow_ttl_s": 2.0
+  },
+  "assumptions": [
+    "Source-time age survives relay; relay adds a second independent latency/loss hop.",
+    "Own 0201/2/3/4/8/B/D must be forwarded by sentry, not read from radar-local robot messages.",
+    "Own allowance excludes fortress reserve (separate field); enemy allowance includes reserve for 3/4/7.",
+    "Arena team fortress_ammo represents shared reserve, added to each enemy 3/4/7 allowance.",
+    "Only base posture is used; enhanced posture collapses to its corresponding base posture.",
+    "Zone activation omitted: Arena occupants are not proven equivalent to protocol activation.",
+    "Own invulnerable/weak, heading, recovery buff, gold and unverified terrain flags omitted.",
+    "No 2/6 ground slots, progress, velocity, target locks, future state or raw capture progress.",
+    "Arena uses identity field transform; physical field-to-Arena calibration required before live use.",
+    "Little-endian payload bridge convention requires validation against real decoded captures.",
+    "Not a deployed ROS node or measured wireless/0301 transport; relay packing/budget validation pending."
+  ]
+}

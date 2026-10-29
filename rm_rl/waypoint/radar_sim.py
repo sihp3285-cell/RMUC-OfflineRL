@@ -3,11 +3,12 @@
 Examples (use the dl_env Python):
   -m rm_rl.waypoint.radar_sim collect --matches 8 --out data/radar27_pilot
   -m rm_rl.waypoint.train_cls --data data/radar27_pilot --out rm_runs/radar27_cls
-  -m rm_rl.waypoint.radar_sim evaluate --ckpt rm_runs/radar27_cls/best.pt --out rm_runs/radar27_eval
+  -m rm_rl.waypoint.radar_sim evaluate --ckpt rm_runs/radar27_cls_v1/best.pt --out rm_runs/radar27_eval
 
 This is a semantic observation simulator, not a radio/wire parser. The full
 snapshot is used only by the sensor boundary and evaluator, never by student
-or rule prediction. All candidate groups share one low-level strategy.
+or rule prediction. Student, rule and baseline groups share the executor;
+the optional teacher comparison uses its native strategy.
 """
 from __future__ import annotations
 
@@ -25,12 +26,14 @@ import time
 import numpy as np
 import torch
 
-from rm_rl.waypoint.radar import (SCHEMA, FEATURE_DIM, ANCHORS, RadarAdapter, RadarConfig,
-                                  canonical_xy, contract, value, FIELD_INDEX)
+from rm_rl.waypoint.radar import (SCHEMA, ANCHORS, RadarConfig,
+                                  canonical_xy, value, FIELD_INDEX)
 from rm_rl.waypoint.teachers import StrategyRunner, TracedSentryTeacher
 from rm_rl.waypoint.model import WaypointClassifier
 from rm_rl.waypoint.goal_filter import GoalFilter
-from rm_rl.waypoint.features import obs_to_frame, build_features, sequence_context_one, rule_features, anchor_features
+from rm_rl.waypoint.executor import install_goal_resolver, VERSION as EXECUTOR_VERSION
+from rm_rl.waypoint.action_space import validate as validate_actions
+from rm_rl.waypoint.observation import SCHEMAS, description, adapter as make_adapter, reader, field_index
 
 APP = '/home/delphine/rm/arena-runtime/squashfs-root/resources/runtime/app'
 TEACHER = '/home/delphine/.config/Arena-1/.arena_data/strategy-library/versions/17978d64f27265c1a3acc7c074f0802bb4b3ee349598428c87136c0e5255d72f/strategies/gpt61_2027_adaptive_2772/strategy.py'
@@ -73,15 +76,25 @@ def commands(m, side, candidate, state, base, bs, opponent, os):
 class Predictor:
     def __init__(self, path, expected):
         state = torch.load(path, map_location='cpu', weights_only=False)
+        if expected is None: expected = state.get('observation_schema')
+        if expected not in SCHEMAS:
+            raise ValueError('unsupported radar checkpoint schema')
         if state.get('observation_schema', 'arena307') != expected:
             raise ValueError(f'checkpoint schema must be {expected}')
-        if expected == SCHEMA and (state['obs_dim'] != FEATURE_DIM or state['observation_contract'] != contract()):
+        if expected in SCHEMAS and (state['obs_dim'] != description(expected)[0] or state['observation_contract'] != description(expected)[1]):
             raise ValueError('radar checkpoint contract mismatch')
+        self.schema = expected
         self.model = WaypointClassifier(state['obs_dim'], state['n_classes'], state['hidden'], state['depth'])
         self.model.load_state_dict(state['state_dict']); self.model.eval()
         self.mean, self.std = state['mean'], state['std']
         self.anchors = np.asarray(state['anchors'])
-        self.history = []
+        action_spec = state.get('action_contract')
+        if action_spec is not None:
+            if not np.array_equal(validate_actions(action_spec), self.anchors):
+                raise ValueError('checkpoint action contract mismatch')
+            self.supply_anchor = self.anchors[action_spec['supply_index']]
+        else:
+            self.supply_anchor = ANCHORS[3]
 
     def predict(self, features):
         x = (features - self.mean) / self.std
@@ -93,14 +106,9 @@ class Predictor:
             raise ValueError('nonfinite model output')
         return self.anchors[int(np.argmax(logits))]
 
-    def old_predict(self, obs):
-        f = build_features(obs_to_frame(obs))
-        seq = sequence_context_one(f, self.history)
-        self.history.append(f); self.history = self.history[-100:]
-        return self.predict(anchor_features(rule_features(seq), self.anchors))
 
-
-def rule_goal(f):
+def rule_goal(f, schema=SCHEMA):
+    value = reader(schema)
     hp, max_hp, ammo = (value(f, n) for n in ('ally.7.hp', 'ally.7.max_hp', 'ally.7.ammo_proxy'))
     if ammo is not None and ammo < 30 or hp is not None and max_hp and hp / max_hp < .24:
         return ANCHORS[3]
@@ -117,7 +125,7 @@ def rule_goal(f):
 
 class Candidate:
     def __init__(self, args, sdk, mode):
-        self.module = StrategyRunner(args.baseline, sdk).module
+        self.module = StrategyRunner(args.teacher if mode == 'teacher' else args.baseline, sdk).module
         self.policy_errors = 0
         self.policy_error_messages = []
         # The baseline act() catches decide() exceptions internally. Observe
@@ -136,7 +144,9 @@ class Candidate:
         self.original = self.module.drive
         self.module.drive = self.drive
         self.mode, self.side = mode, args.side
-        self.predictor = Predictor(args.ckpt, SCHEMA) if mode in ('radar', 'radar_hysteresis') else (Predictor(args.old_ckpt, 'arena307') if mode == 'arena' else None)
+        self.schema = getattr(args, "observation_schema", SCHEMA)
+        self.value = reader(self.schema)
+        self.predictor = Predictor(args.ckpt, getattr(args, "observation_schema", SCHEMA)) if mode in ('radar', 'radar_hysteresis') else None
         self.filter = GoalFilter(args.confirm_s, args.min_hold_s) if mode == 'radar_hysteresis' else None
         self.proposed = None
         self.filter_reason = None
@@ -147,10 +157,13 @@ class Candidate:
         self.fallbacks = 0
         self.prediction_errors = 0
         self.decisions = 0
+        self.executor = getattr(args, 'executor', 'legacy')
+        if self.executor == EXECUTOR_VERSION and mode != 'teacher':
+            install_goal_resolver(self.module, lambda robot, ctx, goal: self.selected if self.selected is not None else goal)
 
     def drive(self, robot, goal, obs, memory, tolerance=.35):
         if str(robot.get('slot')) == '7' and robot.get('role') == 'sentry':
-            if self.selected is not None:
+            if self.selected is not None and self.executor == 'legacy':
                 goal = self.selected
             self.goal = (float(goal[0]), float(goal[1]))
         return self.original(robot, goal, obs, memory, tolerance)
@@ -160,21 +173,21 @@ class Candidate:
         self.filter_reason = None
         self.decisions += 1
         if self.mode in ('radar', 'radar_hysteresis', 'rule'):
-            if any(value(self.features, 'ally.7.' + key) is None for key in ('x', 'y')):
+            if any(self.value(self.features, 'ally.7.' + key) is None for key in ('x', 'y')):
                 self.fallbacks += 1
                 if self.filter: self.filter.reset()
                 self.filter_reason = 'missing_position'
             else:
                 try:
-                    p = self.predictor.predict(self.features) if self.predictor else rule_goal(self.features)
+                    p = self.predictor.predict(self.features) if self.predictor else rule_goal(self.features, self.schema)
                     self.proposed = tuple(map(float, p))
                     if self.filter:
-                        if value(self.features, 'ally.7.alive') == 0:
+                        if self.value(self.features, 'ally.7.alive') == 0:
                             self.filter.reset()
                             self.filter_reason = 'dead_reset'
                         else:
-                            hp, max_hp, ammo = (value(self.features, n) for n in ('ally.7.hp', 'ally.7.max_hp', 'ally.7.ammo_proxy'))
-                            urgent = bool(np.allclose(p, ANCHORS[3]) and (ammo is not None and ammo < 30 or hp is not None and max_hp and hp / max_hp < .24))
+                            hp, max_hp, ammo = (self.value(self.features, n) for n in ('ally.7.hp', 'ally.7.max_hp', 'ally.7.ammo_proxy'))
+                            urgent = bool(np.allclose(p, self.predictor.supply_anchor) and (ammo is not None and ammo < 30 or hp is not None and max_hp and hp / max_hp < .24))
                             p = self.filter.update(p, float(obs['time']), urgent=urgent)
                             self.filter_reason = self.filter.reason
                             self.held_decisions += int(self.filter_reason == 'held')
@@ -185,8 +198,6 @@ class Candidate:
                     self.filter_reason = 'prediction_error'
                     self.prediction_errors += 1
                     self.fallbacks += 1
-        elif self.mode == 'arena':
-            self.selected = tuple(map(float, self.predictor.old_predict(obs)))
         if self.selected is not None and not (0 <= self.selected[0] <= 28 and 0 <= self.selected[1] <= 15):
             raise ValueError('invalid waypoint')
         return self.module.act(obs, state)
@@ -242,7 +253,7 @@ def metrics(history):
 
 def collect_one(args, seed):
     m, base, opponent, sdk = setup(args, seed)
-    adapter = RadarAdapter(config(args), args.side, seed)
+    adapter = make_adapter(getattr(args, "observation_schema", SCHEMA), config(args), args.side, seed)
     teacher = TracedSentryTeacher(args.teacher, sdk)
     state = bs = os = None
     rows, goals, egos, times = [], [], [], []
@@ -262,17 +273,21 @@ def collect_one(args, seed):
         if not rows: raise RuntimeError('no valid teacher targets')
         dest = Path(args.out) / f'match-{seed:04d}.npz'
         goals = np.asarray(goals, dtype=np.float32)
-        np.savez_compressed(dest, schema=np.asarray(SCHEMA), features=np.asarray(rows), goals=goals,
-                            labels=goals / [28, 15], ego=np.asarray(egos, dtype=np.float32), time=np.asarray(times),
+        np.savez_compressed(dest, schema=np.asarray(getattr(args, "observation_schema", SCHEMA)), features=np.asarray(rows), goals=goals,
+                            labels=goals / [28, 15], seed=np.asarray(seed), side=np.asarray(args.side),
+                            observation_contract=np.asarray(json.dumps(description(getattr(args, "observation_schema", SCHEMA))[1])),
+                            teacher_sha256=np.asarray(sha(args.teacher)), ego=np.asarray(egos, dtype=np.float32), time=np.asarray(times),
                             sensor_config=np.asarray(json.dumps(asdict(config(args)))))
-        return {'seed': seed, 'samples': len(rows), 'path': str(dest), 'engine_hash': frame.get('engine_hash'), 'rules_hash': frame.get('rules_hash')}
+        if teacher.policy_errors:
+            raise RuntimeError(f'teacher had {teacher.policy_errors} hidden policy errors: {teacher.policy_error_messages}')
+        return {'seed': seed, 'side': args.side, 'mode': 'collect', 'teacher_policy_errors': teacher.policy_errors, 'samples': len(rows), 'path': str(dest), 'engine_hash': frame.get('engine_hash'), 'rules_hash': frame.get('rules_hash')}
     finally:
         m.close()
 
 
 def evaluate_one(args, seed, mode):
     m, base, opponent, sdk = setup(args, seed)
-    adapter = RadarAdapter(config(args), args.side, seed)
+    adapter = make_adapter(getattr(args, "observation_schema", SCHEMA), config(args), args.side, seed)
     candidate = Candidate(args, sdk, mode)
     state = bs = os = None
     history, latencies, valid_fractions, input_ages = [], [], [], []
@@ -281,7 +296,7 @@ def evaluate_one(args, seed, mode):
             frame = m.snapshot()
             candidate.features = adapter.observe(frame)
             valid_fractions.append(float(candidate.features[1::3].mean()))
-            own_i = 3 * FIELD_INDEX["ally.7.x"]
+            own_i = 3 * field_index(getattr(args, "observation_schema", SCHEMA), "ally.7.x")
             if candidate.features[own_i + 1] > .5:
                 input_ages.append(float(candidate.features[own_i + 2]) * 5)
             before = sample(frame, args.side)
@@ -298,7 +313,7 @@ def evaluate_one(args, seed, mode):
         result = {'seed': seed, 'mode': mode, 'side': args.side, 'winner': m.winner,
                   'duration_s': m.time, 'metrics': metrics(history), 'fallbacks': candidate.fallbacks,
                   'held_decisions': candidate.held_decisions, 'urgent_decisions': candidate.urgent_decisions,
-                  'prediction_errors': candidate.prediction_errors, 'decisions': candidate.decisions,
+                  'executor': candidate.executor, 'prediction_errors': candidate.prediction_errors, 'decisions': candidate.decisions,
                   'candidate_policy_errors': candidate.policy_errors,
                   'candidate_policy_error_messages': candidate.policy_error_messages,
                   'observation_valid_fraction': float(np.mean(valid_fractions)),
@@ -347,9 +362,10 @@ def main():
     p.add_argument('--teacher', default=TEACHER)
     p.add_argument('--baseline', default=BASELINE)
     p.add_argument('--opponent', default=APP + '/examples/claude_opus55_xhigh_2027_hold/strategy.py')
-    p.add_argument('--ckpt', default='rm_runs/radar27_cls/best.pt')
-    p.add_argument('--old-ckpt', default='rm_runs/waypoint_legal_cls/best.pt')
-    p.add_argument('--modes', nargs='+', choices=('baseline', 'rule', 'radar', 'radar_hysteresis', 'arena'), default=['baseline', 'rule', 'radar'])
+    p.add_argument('--ckpt', default='rm_runs/radar27_cls_v1/best.pt')
+    p.add_argument('--modes', nargs='+', choices=('baseline', 'rule', 'radar', 'radar_hysteresis', 'teacher'), default=['radar_hysteresis'])
+    p.add_argument('--observation-schema', choices=SCHEMAS, default=SCHEMA)
+    p.add_argument('--executor', choices=('legacy', EXECUTOR_VERSION), default=EXECUTOR_VERSION)
     p.add_argument('--confirm-s', type=float, default=1.)
     p.add_argument('--min-hold-s', type=float, default=2.)
     p.add_argument('--side', choices=('red', 'blue'), default='red')
@@ -366,8 +382,6 @@ def main():
     p.add_argument('--out', required=True)
     args = p.parse_args()
     if args.matches < 1 or args.duration < 1 or args.workers < 1: p.error('positive matches/duration required')
-    if args.side != 'red' and args.command == 'evaluate' and 'arena' in args.modes:
-        p.error('old Arena checkpoint supports red only')
     config(args)
     GoalFilter(args.confirm_s, args.min_hold_s)
     torch.set_num_threads(1)
@@ -375,15 +389,15 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     if any(out.iterdir()):
         raise SystemExit('use a fresh output directory to preserve previous experiments')
-    manifest = {'args': vars(args), 'sensor_config': asdict(config(args)), 'contract': contract(),
+    manifest = {'args': vars(args), 'sensor_config': asdict(config(args)), 'contract': description(args.observation_schema)[1],
                 'code_sha256': {str(path): sha(path) for path in Path(__file__).parent.glob('*.py')},
                 'baseline_sha256': sha(args.baseline), 'opponent_sha256': sha(args.opponent),
                 'metric_notes': ['damage_taken_hp_proxy includes lethal HP loss but misses simultaneous healing/damage',
                                  'arrival measured per actual drive goal segment; no-command and death end a segment',
                                  'time quantities use actual elapsed engine time; results are simulation evidence only']}
-    if args.command == 'collect': manifest['teacher_sha256'] = sha(args.teacher)
-    else:
-        manifest['checkpoint_sha256'] = {m: sha(path) for m, path in [('radar', args.ckpt), ('radar_hysteresis', args.ckpt), ('arena', args.old_ckpt)] if m in args.modes}
+    if args.command == 'collect' or 'teacher' in args.modes: manifest['teacher_sha256'] = sha(args.teacher)
+    if args.command == 'evaluate':
+        manifest['checkpoint_sha256'] = {m: sha(path) for m, path in [('radar', args.ckpt), ('radar_hysteresis', args.ckpt)] if m in args.modes}
     (out / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))
     results = []
     jobs = [(seed, mode) for seed in range(args.seed_start, args.seed_start + args.matches)

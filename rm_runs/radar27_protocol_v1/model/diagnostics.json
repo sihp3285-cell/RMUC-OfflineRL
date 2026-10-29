@@ -1,0 +1,45 @@
+{
+  "validation_confusion_true_rows_predicted_columns": [
+    [
+      18309,
+      361,
+      306,
+      979
+    ],
+    [
+      76,
+      6845,
+      20,
+      0
+    ],
+    [
+      282,
+      16,
+      4898,
+      104
+    ],
+    [
+      254,
+      0,
+      83,
+      393
+    ]
+  ],
+  "class_support": [
+    19955,
+    6941,
+    5300,
+    730
+  ],
+  "per_class_recall": [
+    0.9175144074166875,
+    0.9861691398933872,
+    0.9241509433962264,
+    0.5383561643835616
+  ],
+  "macro_recall": 0.8415476637724657,
+  "constant_training_majority_accuracy": 0.6060560043734434,
+  "validation_majority_oracle_accuracy": 0.6060560043734434,
+  "teacher_target_assignment_max_m": 0.006103362888097763,
+  "note": "Validation is for model selection; it is not held-out closed-loop performance."
+}
